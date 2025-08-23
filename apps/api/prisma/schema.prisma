@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  seed     = "ts-node --transpile-only ../src/seed.ts"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+    id String    @id @default(uuid(7)) @db.Uuid
+    name String
+    email String @unique
+    password String
+    properties Property[]
+}
+
+enum PropertyStatus {
+    active
+    pending
+    sold
+}
+
+model Property {
+    id String    @id @default(uuid(7)) @db.Uuid
+    title String
+    price Int
+    address String
+    addressLongitude Float
+    addressLatitude Float
+    bedrooms Int
+    bathrooms Int
+    description String
+    status PropertyStatus @default(active)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    agentId String @db.Uuid
+    agent Agent @relation(fields: [agentId], references: [id])
+    inquiries Inquiry[]
+
+    @@index([status, price])
+    @@index([status, bedrooms])
+    @@index([status, bathrooms])
+    @@index([status, addressLatitude, addressLongitude])
+    @@index([status, price, bedrooms, bathrooms])
+    @@index([createdAt])
+    @@index([agentId])
+}
+
+model Inquiry {
+    id String    @id @default(uuid(7)) @db.Uuid
+    name String
+    email String
+    phone String
+    propertyId String @db.Uuid
+    property Property @relation(fields: [propertyId], references: [id])
+    createdAt DateTime @default(now())
+}
