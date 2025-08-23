@@ -14,7 +14,6 @@ export const authRouter = c.router({
     responses: {
       200: z.object({
         token: z.string(),
-        refreshToken: z.string(),
       }),
       401: z.object({
         message: z.string(),
