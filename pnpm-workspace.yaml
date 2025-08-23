@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+
+catalog:
+  zod: ^4.0.17
+  '@ts-rest/core': 3.53.0-rc.1
