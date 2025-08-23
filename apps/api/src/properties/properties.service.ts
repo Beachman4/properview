@@ -148,6 +148,15 @@ export class PropertiesService {
         })
     }
 
+    async retrieveByIdAndAgentId(id: string, agentId: string) {
+        return this.prisma.property.findUniqueOrThrow({
+            where: {
+                id,
+                agentId
+            }
+        })
+    }
+
     async create(agentId: string, data: ServerInferRequest<typeof contract.agent.properties.create>["body"]) {
         const coordinates = await this.mapboxService.getCoordinates(data.address);
         const [longitude, latitude] = coordinates;
