@@ -1,7 +1,9 @@
 import Providers from "@/providers/Providers";
 import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 
+import 'mapbox-gl/dist/mapbox-gl.css';
 import '../globals.css'
 
 const geistSans = Geist({
@@ -33,6 +35,7 @@ export default function PublicLayout({
           
           <Providers>
             {children}
+            <Toaster />
           </Providers>
         </body>
       </html>
