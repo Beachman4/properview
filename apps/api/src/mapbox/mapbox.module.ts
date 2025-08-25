@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MapboxService } from './mapbox.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import MapiClient from '@mapbox/mapbox-sdk/lib/classes/mapi-client';
+import mbxClient from '@mapbox/mapbox-sdk/lib/node/node-client.js'
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import MapiClient from '@mapbox/mapbox-sdk/lib/classes/mapi-client';
     {
       provide: 'mapbox',
       useFactory: (configService: ConfigService) => {
-        return new MapiClient({
+        return mbxClient({
           accessToken: configService.getOrThrow<string>('mapbox.accessToken'),
         })
       },
