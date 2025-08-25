@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, PropertyStatus } from '@prisma/client';
 import { contract } from '@properview/api-contract';
 import { ServerInferRequest, ServerInferResponseBody } from '@ts-rest/core';
-import { MapboxService } from 'src/mapbox/mapbox.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { MapboxService } from '../mapbox/mapbox.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PropertiesService {

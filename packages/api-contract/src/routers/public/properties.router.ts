@@ -1,5 +1,5 @@
 import { initContract } from "@ts-rest/core";
-import { commonPropertySchema } from "src/schemas";
+import { commonPropertySchema } from "../../schemas";
 import { z } from "zod";
 
 

@@ -1,8 +1,8 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { TsRest, TsRestHandler, tsRestHandler } from '@ts-rest/nest';
-import { PropertiesService } from 'src/properties/properties.service';
+import { PropertiesService } from '../../properties/properties.service';
 import { AgentAuthGuard } from '../auth/agent-auth.guard';
-import { AuthedAgent } from 'src/core/decorators/authed-agent.decorator';
+import { AuthedAgent } from '../../core/decorators/authed-agent.decorator';
 import { Agent } from '@prisma/client';
 import { contract } from '@properview/api-contract';
 
