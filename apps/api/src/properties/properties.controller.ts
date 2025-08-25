@@ -60,11 +60,10 @@ export class PropertiesController {
 
     @TsRestHandler(contract.public.properties.submitInquiry)
     submitInquiry() {
-        return tsRestHandler(contract.public.properties.submitInquiry, async ({ params, body }) => {
-            const { id } = params;
+        return tsRestHandler(contract.public.properties.submitInquiry, async ({ body }) => {
             const inquiryData = body;
             
-            await this.inquiriesService.submitInquiry(id, inquiryData);
+            await this.inquiriesService.submitInquiry(inquiryData.propertyId, inquiryData);
             
             return {
                 status: 200,

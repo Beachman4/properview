@@ -5,7 +5,6 @@ import { authHeaders } from ".";
 
 const propertySchema = commonPropertySchema.extend({
     agentId: z.string(),
-    status: z.enum(['active', 'pending', 'sold']),
     views: z.number(),
     inquiries: z.number(),
     conversionRate: z.number()
@@ -50,7 +49,7 @@ export const propertiesRouter = c.router({
     },
     create: {
         method: 'POST',
-        path: '/agent/properties',
+        path: '/properties',
         headers: authHeaders,
         body: z.object({
             title: z.string(),
@@ -75,6 +74,7 @@ export const propertiesRouter = c.router({
             bedrooms: z.number(),
             bathrooms: z.number(),
             description: z.string(),
+            status: z.enum(['active', 'pending', 'sold']),
         }),
         responses: {
             200: propertySchema,
@@ -82,25 +82,10 @@ export const propertiesRouter = c.router({
     },
     delete: {
         method: 'DELETE',
-        path: '/agent/properties/:id',
+        path: '/properties/:id',
         headers: authHeaders,
         responses: {
             204: z.null(),
-        }
-    },
-    inquiries: {
-        method: 'GET',
-        path: '/agent/properties/:id/inquiries',
-        headers: authHeaders,
-        responses: {
-            200: z.array(z.object({
-                id: z.string(),
-                name: z.string(),
-                email: z.string(),
-                phone: z.string(),
-                message: z.string(),
-                createdAt: z.date(),
-            })),
         }
     }
 })

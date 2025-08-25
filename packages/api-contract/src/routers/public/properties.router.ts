@@ -57,8 +57,9 @@ export const propertiesRouter = c.router({
     },
     submitInquiry: {
         method: 'POST',
-        path: '/properties/:id/inquiry',
+        path: '/inquiries',
         body: z.object({
+            propertyId: z.string(),
             name: z.string(),
             email: z.email(),
             phone: z.string(),

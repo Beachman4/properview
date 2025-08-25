@@ -10,5 +10,6 @@ export const commonPropertySchema = z.object({
     bedrooms: z.number(),
     bathrooms: z.number(),
     description: z.string(),
+    status: z.enum(['active', 'pending', 'sold']),
     createdAt: z.date(),
 })
