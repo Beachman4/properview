@@ -36,6 +36,13 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
     }
   })
 
+  tsr.public.properties.view.useQuery({
+    queryKey: [],
+    queryData: {
+      params: { id: propertyId }
+    }
+  })
+
   // Initialize map when property data is available
   useEffect(() => {
     if (!property?.body || !mapContainerRef.current || mapRef.current) return
@@ -100,7 +107,7 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
           <div className="text-center">
             <h3 className="text-lg font-semibold text-destructive">Property not found</h3>
             <p className="text-sm text-muted-foreground mb-4">The property you're looking for doesn't exist or has been removed.</p>
-            <Button onClick={() => router.back()}>Go Back</Button>
+            <Button onClick={() => router.push('/')}>Go Back</Button>
           </div>
         </div>
       </div>
@@ -115,7 +122,7 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
       <Button 
         variant="ghost" 
         className="mb-6" 
-        onClick={() => router.back()}
+        onClick={() => router.push('/')}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Properties
@@ -289,7 +296,7 @@ function InquiryForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name || !formData.email || !formData.phone) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.message) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -299,7 +306,8 @@ function InquiryForm({
       body: {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone
+        phone: formData.phone,
+        message: formData.message
       }
     })
   }
