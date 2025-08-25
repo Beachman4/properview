@@ -32,6 +32,7 @@ export default async function Home({
     // Prefetch the first page of properties on the server
     await tsrQueryClient.public.properties.list.prefetchInfiniteQuery({
         queryKey: ['properties', filters],
+        // @ts-expect-error - infiniteQuery types are a little messed up with ts rest
         queryData: ({ pageParam }: { pageParam: { page: number } }) => ({
             query: {
                 page: pageParam?.page ?? 1,
