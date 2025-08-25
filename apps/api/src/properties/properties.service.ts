@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, PropertyStatus } from '@prisma/client';
+import { Inquiry, Prisma, Property, PropertyStatus } from '@prisma/client';
 import { contract } from '@properview/api-contract';
 import { ServerInferRequest, ServerInferResponseBody } from '@ts-rest/core';
 import { MapboxService } from '../mapbox/mapbox.service';
@@ -24,43 +24,60 @@ export class PropertiesService {
             const coordinates = await this.mapboxService.getCoordinates(queryParams.location);
             const [longitude, latitude] = coordinates;
             
-            // Use raw SQL with Haversine formula for precise distance calculation within 50 miles
-            const propertiesWithDistance = await this.prisma.$queryRaw<Array<any & { distance_miles: number }>>`
-                SELECT 
-                    p.*,
-                    (3959 * acos(cos(radians(${latitude})) * cos(radians(p."addressLatitude")) * 
-                     cos(radians(p."addressLongitude") - radians(${longitude})) + 
-                     sin(radians(${latitude})) * sin(radians(p."addressLatitude")))) as distance_miles
-                FROM "Property" p
-                WHERE p.status = 'active'
-                ${queryParams.bedroomsMin ? `AND p.bedrooms >= ${queryParams.bedroomsMin}` : ''}
-                ${queryParams.bedroomsMax ? `AND p.bedrooms <= ${queryParams.bedroomsMax}` : ''}
-                ${queryParams.bathroomsMin ? `AND p.bathrooms >= ${queryParams.bathroomsMin}` : ''}
-                ${queryParams.bathroomsMax ? `AND p.bathrooms <= ${queryParams.bathroomsMax}` : ''}
-                ${queryParams.priceMin ? `AND p.price >= ${queryParams.priceMin}` : ''}
-                ${queryParams.priceMax ? `AND p.price <= ${queryParams.priceMax}` : ''}
-                AND (3959 * acos(cos(radians(${latitude})) * cos(radians(p."addressLatitude")) * 
-                     cos(radians(p."addressLongitude") - radians(${longitude})) + 
-                     sin(radians(${latitude})) * sin(radians(p."addressLatitude")))) <= 50
-                ORDER BY distance_miles ASC
-                LIMIT ${limit}
-                OFFSET ${(page - 1) * limit}
-            `;
+            // Build dynamic WHERE conditions using Prisma.sql
+            let whereConditions = [Prisma.sql`p.status = 'active'`];
             
-            const totalWithDistance = await this.prisma.$queryRaw<Array<{ total: bigint }>>`
-                SELECT COUNT(*) as total
-                FROM "Property" p
-                WHERE p.status = 'active'
-                ${queryParams.bedroomsMin ? `AND p.bedrooms >= ${queryParams.bedroomsMin}` : ''}
-                ${queryParams.bedroomsMax ? `AND p.bedrooms <= ${queryParams.bedroomsMax}` : ''}
-                ${queryParams.bathroomsMin ? `AND p.bathrooms >= ${queryParams.bathroomsMin}` : ''}
-                ${queryParams.bathroomsMax ? `AND p.bathrooms <= ${queryParams.bathroomsMax}` : ''}
-                ${queryParams.priceMin ? `AND p.price >= ${queryParams.priceMin}` : ''}
-                ${queryParams.priceMax ? `AND p.price <= ${queryParams.priceMax}` : ''}
-                AND (3959 * acos(cos(radians(${latitude})) * cos(radians(p."addressLatitude")) * 
-                     cos(radians(p."addressLongitude") - radians(${longitude})) + 
-                     sin(radians(${latitude})) * sin(radians(p."addressLatitude")))) <= 50
-            `;
+            if (queryParams.bedroomsMin) {
+                whereConditions.push(Prisma.sql`p.bedrooms >= ${queryParams.bedroomsMin}`);
+            }
+            if (queryParams.bedroomsMax) {
+                whereConditions.push(Prisma.sql`p.bedrooms <= ${queryParams.bedroomsMax}`);
+            }
+            if (queryParams.bathroomsMin) {
+                whereConditions.push(Prisma.sql`p.bathrooms >= ${queryParams.bathroomsMin}`);
+            }
+            if (queryParams.bathroomsMax) {
+                whereConditions.push(Prisma.sql`p.bathrooms <= ${queryParams.bathroomsMax}`);
+            }
+            if (queryParams.priceMin) {
+                whereConditions.push(Prisma.sql`p.price >= ${queryParams.priceMin}`);
+            }
+            if (queryParams.priceMax) {
+                whereConditions.push(Prisma.sql`p.price <= ${queryParams.priceMax}`);
+            }
+            
+            // Add distance condition (within 10 miles)
+            whereConditions.push(Prisma.sql`(3959 * acos(cos(radians(${latitude})) * cos(radians(p."addressLatitude")) * 
+                cos(radians(p."addressLongitude") - radians(${longitude})) + 
+                sin(radians(${latitude})) * sin(radians(p."addressLatitude")))) <= 10`);
+            
+            // Combine WHERE conditions
+            const whereClause = Prisma.join(whereConditions, ' AND ');
+            
+            // Use raw SQL with Haversine formula for precise distance calculation within 10 miles
+            const propertiesWithDistance = await this.prisma.$queryRaw<Array<any & { distance_miles: number }>>(
+                Prisma.sql`
+                    SELECT 
+                        p.*,
+                        (3959 * acos(cos(radians(${latitude})) * cos(radians(p."addressLatitude")) * 
+                         cos(radians(p."addressLongitude") - radians(${longitude})) + 
+                         sin(radians(${latitude})) * sin(radians(p."addressLatitude")))) as distance_miles
+                    FROM "Property" p
+                    WHERE ${whereClause}
+                    ORDER BY distance_miles ASC
+                    LIMIT ${limit}
+                    OFFSET ${(page - 1) * limit}
+                `
+            );
+            
+            // Count query with same conditions
+            const totalWithDistance = await this.prisma.$queryRaw<Array<{ total: bigint }>>(
+                Prisma.sql`
+                    SELECT COUNT(*) as total
+                    FROM "Property" p
+                    WHERE ${whereClause}
+                `
+            );
             
             const total = Number(totalWithDistance[0].total);
             
@@ -80,6 +97,7 @@ export class PropertiesService {
         const orderBy: Prisma.PropertyOrderByWithRelationInput = {
             ...(queryParams.sortBy === 'price' && { price: queryParams.sortOrder }),
             ...(queryParams.sortBy === 'createdAt' && { createdAt: queryParams.sortOrder }),
+            ...(queryParams.sortBy === 'bedrooms' && { bedrooms: queryParams.sortOrder }),
             ...(!queryParams.sortBy && { createdAt: queryParams.sortOrder }),
         }
 
@@ -116,6 +134,9 @@ export class PropertiesService {
                 },
                 skip: (page - 1) * limit,
                 take: limit,
+                include: {
+                    inquiries: true
+                },
                 orderBy: {
                     createdAt: 'desc'
                 }
@@ -128,7 +149,10 @@ export class PropertiesService {
         ])
 
         return {
-            data: properties,
+            data: properties.map(property => ({
+                ...property,
+                conversionRate: this.calculateConversionRate(property, property.inquiries)
+            })),
             meta: {
                 total,
                 page,
@@ -153,8 +177,14 @@ export class PropertiesService {
             where: {
                 id,
                 agentId
+            },
+            include: {
+                inquiries: true
             }
-        })
+        }).then(property => ({
+            ...property,
+            conversionRate: this.calculateConversionRate(property, property.inquiries)
+        }))
     }
 
     async create(agentId: string, data: ServerInferRequest<typeof contract.agent.properties.create>["body"]) {
@@ -194,8 +224,14 @@ export class PropertiesService {
             where: {
                 id
             },
+            include: {
+                inquiries: true
+            },
             data: updateData
-        })
+        }).then(property => ({
+            ...property,
+            conversionRate: this.calculateConversionRate(property, property.inquiries)
+        }))
     }
 
     async delete(id: string) {
@@ -204,5 +240,12 @@ export class PropertiesService {
                 id
             }
         })
+    }
+
+    private calculateConversionRate(property: Property, inquiries: Inquiry[]) {
+        if (property.views === 0 || inquiries.length === 0) {
+            return 0
+        }
+        return inquiries.length / property.views
     }
 }
