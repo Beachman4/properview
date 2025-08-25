@@ -4,15 +4,17 @@ import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MapboxService {
-    constructor(@Inject('mapbox') private readonly mapboxClient: MapiClient) {}
+  constructor(@Inject('mapbox') private readonly mapboxClient: MapiClient) {}
 
-    async getCoordinates(addressOrLocation: string) {
-        const geocodingService = GeocodingV6(this.mapboxClient);
-        const { body } = await geocodingService.forwardGeocode({
-            query: addressOrLocation,
-            limit: 1,
-        }).send()
+  async getCoordinates(addressOrLocation: string) {
+    const geocodingService = GeocodingV6(this.mapboxClient);
+    const { body } = await geocodingService
+      .forwardGeocode({
+        query: addressOrLocation,
+        limit: 1,
+      })
+      .send();
 
-        return body.features[0].geometry.coordinates;
-    }
+    return body.features[0].geometry.coordinates;
+  }
 }

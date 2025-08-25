@@ -23,6 +23,11 @@ export const inquiriesRouter = c.router({
                     name: z.string(),
                     email: z.string(),
                     phone: z.string(),
+                    propertyId: z.string(),
+                    property: z.object({
+                        id: z.string(),
+                        title: z.string()
+                    }),
                     message: z.string(),
                     createdAt: z.date(),
                 })),

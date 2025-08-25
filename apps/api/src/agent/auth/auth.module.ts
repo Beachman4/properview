@@ -7,17 +7,20 @@ import { AgentsModule } from '../agents/agents.module';
 import { AgentAuthGuard } from './agent-auth.guard';
 
 @Module({
-  imports: [JwtModule.registerAsync({
-    imports: [ConfigModule],
-    inject: [ConfigService],
-    useFactory: (configService: ConfigService) => ({
-      secret: configService.get("JWT_SECRET"),
-      global: true,
-      signOptions: { expiresIn: "60d" },
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        global: true,
+        signOptions: { expiresIn: '60d' },
+      }),
     }),
-  }), AgentsModule],
+    AgentsModule,
+  ],
   providers: [AuthService, AgentAuthGuard],
   controllers: [AuthController],
-  exports: [AuthService, AgentAuthGuard]
+  exports: [AuthService, AgentAuthGuard],
 })
 export class AuthModule {}

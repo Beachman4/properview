@@ -3,10 +3,8 @@ import { InquiriesService } from './inquiries.service';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [
-    PrismaModule
-  ],
+  imports: [PrismaModule],
   providers: [InquiriesService],
-  exports: [InquiriesService]
+  exports: [InquiriesService],
 })
 export class InquiriesModule {}

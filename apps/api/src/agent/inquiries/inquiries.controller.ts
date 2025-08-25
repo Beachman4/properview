@@ -10,29 +10,33 @@ import { TsRestResponseError } from '@ts-rest/core';
 
 @Controller()
 @TsRest({
-    jsonQuery: true,
-    validateResponses: true
+  jsonQuery: true,
+  validateResponses: true,
 })
 export class InquiriesController {
-    constructor(private readonly inquiriesService: InquiriesService) {}
+  constructor(private readonly inquiriesService: InquiriesService) {}
 
-    @TsRestHandler(contract.agent.inquiries.list)
-    @UseGuards(AgentAuthGuard)
-    async listInquiries(@AuthedAgent() agent: Agent) {
-        return tsRestHandler(contract.agent.inquiries.list, async ({ query }) => {
+  @TsRestHandler(contract.agent.inquiries.list)
+  @UseGuards(AgentAuthGuard)
+  async listInquiries(@AuthedAgent() agent: Agent) {
+    return tsRestHandler(contract.agent.inquiries.list, async ({ query }) => {
+      if (query.propertyId && !validate(query.propertyId)) {
+        throw new TsRestResponseError(contract.agent.inquiries.list, {
+          status: 400,
+          body: { message: 'Invalid propertyId' },
+        });
+      }
 
-            if (query.propertyId && !validate(query.propertyId)) {
-                throw new TsRestResponseError(contract.agent.inquiries.list, {
-                    status: 400,
-                    body: { message: 'Invalid propertyId' }
-                })
-            }
-
-            const inquiries = await this.inquiriesService.paginateInquiries(agent.id, query.page, query.limit, query.propertyId)
-            return {
-                status: 200,
-                body: inquiries
-            }
-        })
-    }
+      const inquiries = await this.inquiriesService.paginateInquiries(
+        agent.id,
+        query.page,
+        query.limit,
+        query.propertyId,
+      );
+      return {
+        status: 200,
+        body: inquiries,
+      };
+    });
+  }
 }

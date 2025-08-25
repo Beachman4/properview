@@ -3,21 +3,21 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class AgentsService {
-    constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-    async retrieveByEmail(email: string) {
-        return this.prismaService.agent.findUnique({
-            where: {
-                email,
-            },
-        })
-    }
+  async retrieveByEmail(email: string) {
+    return this.prismaService.agent.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
 
-    async retrieveByIdOrThrow(id: string) {
-        return this.prismaService.agent.findUniqueOrThrow({
-            where: {
-                id,
-            },
-        })
-    }
+  async retrieveByIdOrThrow(id: string) {
+    return this.prismaService.agent.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+  }
 }

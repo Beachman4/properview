@@ -5,6 +5,6 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   controllers: [InquiriesController],
-  imports: [InquiriesModuleBase, AuthModule]
+  imports: [InquiriesModuleBase, AuthModule],
 })
 export class InquiriesModule {}

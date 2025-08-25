@@ -6,12 +6,9 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { MapboxModule } from '../mapbox/mapbox.module';
 
 @Module({
-  imports: [
-    PrismaModule,
-    MapboxModule
-  ],
+  imports: [PrismaModule, MapboxModule],
   providers: [PropertiesService, InquiriesService],
   controllers: [PropertiesController],
-  exports: [PropertiesService]
+  exports: [PropertiesService],
 })
 export class PropertiesModule {}

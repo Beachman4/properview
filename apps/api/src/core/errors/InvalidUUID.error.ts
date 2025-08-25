@@ -1,2 +1,1 @@
-export class InvalidUUIDError extends Error {
-}
+export class InvalidUUIDError extends Error {}

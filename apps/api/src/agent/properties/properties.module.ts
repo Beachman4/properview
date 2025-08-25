@@ -4,10 +4,7 @@ import { PropertiesModule as PropertiesModulePublic } from '../../properties/pro
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [
-    PropertiesModulePublic,
-    AuthModule
-  ],
+  imports: [PropertiesModulePublic, AuthModule],
   controllers: [PropertiesController],
 })
 export class PropertiesModule {}

@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MapboxService } from './mapbox.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import mbxClient from '@mapbox/mapbox-sdk/lib/node/node-client.js'
+import mbxClient from '@mapbox/mapbox-sdk/lib/node/node-client.js';
 
 @Module({
-  imports: [
-    ConfigModule
-  ],
+  imports: [ConfigModule],
   providers: [
     MapboxService,
     {
@@ -14,11 +12,11 @@ import mbxClient from '@mapbox/mapbox-sdk/lib/node/node-client.js'
       useFactory: (configService: ConfigService) => {
         return mbxClient({
           accessToken: configService.getOrThrow<string>('mapbox.accessToken'),
-        })
+        });
       },
-      inject: [ConfigService]
-    }
+      inject: [ConfigService],
+    },
   ],
-  exports: [MapboxService]
+  exports: [MapboxService],
 })
 export class MapboxModule {}
