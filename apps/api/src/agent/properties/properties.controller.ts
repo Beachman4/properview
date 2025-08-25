@@ -5,6 +5,10 @@ import { AgentAuthGuard } from '../auth/agent-auth.guard';
 import { AuthedAgent } from '../../core/decorators/authed-agent.decorator';
 import { Agent } from '@prisma/client';
 import { contract } from '@properview/api-contract';
+import { validateUuid } from '../../utils';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { TsRestResponseError } from '@ts-rest/core';
+import { InvalidUUIDError } from '../../core/errors/InvalidUUID.error';
 
 @Controller()
 @TsRest({
@@ -30,10 +34,33 @@ export class PropertiesController {
     @TsRestHandler(contract.agent.properties.get)
     get(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.properties.get, async ({ params }) => {
-            const property = await this.propertiesService.retrieveByIdAndAgentId(params.id, agent.id);
-            return {
-                status: 200,
-                body: property
+            try {
+                validateUuid(params.id)
+                const property = await this.propertiesService.retrieveByIdAndAgentId(params.id, agent.id);
+
+                return {
+                    status: 200,
+                    body: property
+                }
+            } catch (error) {
+                if (error instanceof InvalidUUIDError) {
+                    throw new TsRestResponseError(contract.agent.properties.get, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+                
+                if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+                    throw new TsRestResponseError(contract.agent.properties.get, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+
+                throw new TsRestResponseError(contract.agent.properties.get, {
+                    status: 500,
+                    body: { message: 'Internal server error' }
+                })
             }
         })
     }
@@ -54,10 +81,33 @@ export class PropertiesController {
     @TsRestHandler(contract.agent.properties.update)
     update(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.properties.update, async ({ params, body }) => {
-            const property = await this.propertiesService.update(params.id, agent.id, body);
-            return {
-                status: 200,
-                body: property
+            try {
+                validateUuid(params.id)
+                const property = await this.propertiesService.update(params.id, agent.id, body);
+
+                return {
+                    status: 200,
+                    body: property
+                }
+            } catch (error) {
+                if (error instanceof InvalidUUIDError) {
+                    throw new TsRestResponseError(contract.agent.properties.update, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+
+                if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+                    throw new TsRestResponseError(contract.agent.properties.update, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+
+                throw new TsRestResponseError(contract.agent.properties.update, {
+                    status: 500,
+                    body: { message: 'Internal server error' }
+                })
             }
         })
     }
@@ -66,10 +116,32 @@ export class PropertiesController {
     @TsRestHandler(contract.agent.properties.delete)
     delete(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.properties.delete, async ({ params }) => {
-            await this.propertiesService.delete(params.id, agent.id);
-            return {
-                status: 204,
-                body: null
+            try {
+                validateUuid(params.id)
+                await this.propertiesService.delete(params.id, agent.id);
+                return {
+                    status: 204,
+                    body: null
+                }
+            } catch (error) {
+                if (error instanceof InvalidUUIDError) {
+                    throw new TsRestResponseError(contract.agent.properties.delete, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+
+                if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+                    throw new TsRestResponseError(contract.agent.properties.delete, {
+                        status: 404,
+                        body: { message: 'Property not found' }
+                    })
+                }
+
+                throw new TsRestResponseError(contract.agent.properties.delete, {
+                    status: 500,
+                    body: { message: 'Internal server error' }
+                })
             }
         })
     }

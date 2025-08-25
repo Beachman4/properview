@@ -5,6 +5,8 @@ import { contract } from '@properview/api-contract';
 import { AuthedAgent } from '../../core/decorators/authed-agent.decorator';
 import { Agent } from '@prisma/client';
 import { AgentAuthGuard } from '../auth/agent-auth.guard';
+import { validate } from 'uuid';
+import { TsRestResponseError } from '@ts-rest/core';
 
 @Controller()
 @TsRest({
@@ -18,6 +20,14 @@ export class InquiriesController {
     @UseGuards(AgentAuthGuard)
     async listInquiries(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.inquiries.list, async ({ query }) => {
+
+            if (query.propertyId && !validate(query.propertyId)) {
+                throw new TsRestResponseError(contract.agent.inquiries.list, {
+                    status: 400,
+                    body: { message: 'Invalid propertyId' }
+                })
+            }
+
             const inquiries = await this.inquiriesService.paginateInquiries(agent.id, query.page, query.limit, query.propertyId)
             return {
                 status: 200,
