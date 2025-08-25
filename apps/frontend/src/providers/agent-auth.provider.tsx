@@ -1,6 +1,6 @@
 'use client'
 
-import { accessTokenGetter, setAccessTokenGetter, vanillaClient } from '@/utils/tsr'
+import { setAccessTokenGetter, vanillaClient } from '@/utils/tsr'
 import { isErrorResponse } from '@ts-rest/core'
 import { jwtDecode } from 'jwt-decode'
 import { usePathname, useRouter } from 'next/navigation'

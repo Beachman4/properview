@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 import { tsr } from '@/utils/tsr'
 import { toast } from 'sonner'
-import { useContextBack } from '@/hooks/use-context-back'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface AgentPropertyEditFormProps {
   propertyId: string
@@ -18,12 +18,12 @@ interface AgentPropertyEditFormProps {
 
 export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditFormProps) {
   const router = useRouter()
-  const { goBack, backText } = useContextBack()
   const [formData, setFormData] = useState({
     title: '',
     address: '',
     price: '',
     bedrooms: '',
+    status: 'active',
     bathrooms: '',
     description: ''
   })
@@ -56,7 +56,8 @@ export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditF
         price: p.price.toString(),
         bedrooms: p.bedrooms.toString(),
         bathrooms: p.bathrooms.toString(),
-        description: p.description || ''
+        description: p.description || '',
+        status: p.status
       })
     }
   }, [property])
@@ -98,7 +99,8 @@ export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditF
         price,
         bedrooms,
         bathrooms,
-        description: formData.description
+        description: formData.description,
+        status: formData.status as 'active' | 'pending' | 'sold'
       }
     })
   }
@@ -132,9 +134,9 @@ export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditF
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={goBack}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {backText}
+            Go Back
           </Button>
         </div>
         <Card>
@@ -151,9 +153,9 @@ export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditF
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={goBack}>
+        <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {backText}
+          Go Back
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Edit Property</h1>
@@ -246,12 +248,30 @@ export default function AgentPropertyEditForm({ propertyId }: AgentPropertyEditF
               />
             </div>
 
+            <div>
+                <Label htmlFor="status">Property Status *</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange('status', value)}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="sold">Sold</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
             {/* Submit Button */}
             <div className="flex justify-end gap-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={goBack}
+                onClick={() => router.back()}
                 disabled={isPending}
               >
                 Cancel

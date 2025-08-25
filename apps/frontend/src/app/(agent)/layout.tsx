@@ -31,6 +31,7 @@ import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AgentAuthProvider } from '@/providers/agent-auth.provider'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import '../globals.css'
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -175,6 +176,7 @@ export default function AgentLayout({
             </AgentAuthProvider>
             </CookiesProvider>
             <Toaster />
+            <ReactQueryDevtools initialIsOpen={false} />
           </Providers>
         </body>
       </html>

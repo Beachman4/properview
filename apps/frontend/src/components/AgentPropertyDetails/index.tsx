@@ -24,7 +24,6 @@ import {
 import { tsr } from '@/utils/tsr'
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { useContextBack } from '@/hooks/use-context-back'
 
 interface AgentPropertyDetailsProps {
   propertyId: string
@@ -32,7 +31,6 @@ interface AgentPropertyDetailsProps {
 
 export default function AgentPropertyDetails({ propertyId }: AgentPropertyDetailsProps) {
   const router = useRouter()
-  const { goBack, backText } = useContextBack()
   
   const { data: property, isLoading, error } = tsr.agent.properties.get.useQuery({
     queryKey: ['agent-property', propertyId],
@@ -97,9 +95,9 @@ export default function AgentPropertyDetails({ propertyId }: AgentPropertyDetail
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={goBack}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {backText}
+            Go Back
           </Button>
         </div>
         <Card>
@@ -119,9 +117,9 @@ export default function AgentPropertyDetails({ propertyId }: AgentPropertyDetail
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={goBack}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {backText}
+            Go Back
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{propertyData.title}</h1>
@@ -161,9 +159,19 @@ export default function AgentPropertyDetails({ propertyId }: AgentPropertyDetail
               <CardTitle>Property Overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 flex-wrap">
                 <Badge variant="secondary" className="text-lg px-3 py-1">
                   ${propertyData.price.toLocaleString()}
+                </Badge>
+                <Badge 
+                  variant={
+                    propertyData.status === 'active' ? 'default' : 
+                    propertyData.status === 'pending' ? 'secondary' : 
+                    'destructive'
+                  }
+                  className="text-sm px-3 py-1"
+                >
+                  {propertyData.status.charAt(0).toUpperCase() + propertyData.status.slice(1)}
                 </Badge>
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">

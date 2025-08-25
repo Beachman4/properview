@@ -10,11 +10,9 @@ import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 import { tsr } from '@/utils/tsr'
 import { toast } from 'sonner'
-import { useContextBack } from '@/hooks/use-context-back'
 
 export default function AgentPropertyCreateForm() {
   const router = useRouter()
-  const { goBack, backText } = useContextBack()
   const [formData, setFormData] = useState({
     title: '',
     address: '',
@@ -89,9 +87,9 @@ export default function AgentPropertyCreateForm() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={goBack}>
+        <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {backText}
+          Go Back
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Add New Property</h1>
@@ -189,7 +187,7 @@ export default function AgentPropertyCreateForm() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={goBack}
+                onClick={() => router.back()}
                 disabled={isPending}
               >
                 Cancel

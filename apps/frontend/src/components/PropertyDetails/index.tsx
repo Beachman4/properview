@@ -138,9 +138,19 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
               <MapPin className="w-4 h-4" />
               <span>{propertyData.address}</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <Badge variant="secondary" className="text-lg px-3 py-1">
                 ${propertyData.price.toLocaleString()}
+              </Badge>
+              <Badge 
+                variant={
+                  propertyData.status === 'active' ? 'default' : 
+                  propertyData.status === 'pending' ? 'secondary' : 
+                  'destructive'
+                }
+                className="text-sm px-3 py-1"
+              >
+                {propertyData.status.charAt(0).toUpperCase() + propertyData.status.slice(1)}
               </Badge>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -302,12 +312,12 @@ function InquiryForm({
     }
 
     submitInquiry({
-      params: { id: propertyId },
       body: {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        message: formData.message
+        message: formData.message,
+        propertyId: propertyId
       }
     })
   }
