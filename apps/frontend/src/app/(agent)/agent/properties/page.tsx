@@ -9,19 +9,28 @@ export const metadata: Metadata = {
   description: 'Properview - Agent Properties',
 }
 
-export default async function AgentPropertiesPage() {
-  
+type SearchParams = Promise<{
+  page?: string
+}>
+
+export default async function AgentPropertiesPage({
+  searchParams
+}: {
+  searchParams: SearchParams
+}) {
+  const { page } = await searchParams
   const cookieStore = await cookies();
   const jwtToken = cookieStore.get('jwtToken')?.value;
+  const currentPage = page ? parseInt(page, 10) : 1
 
   tsrQueryClient.agent.properties.list.prefetchQuery({
-    queryKey: ['agent-properties'],
+    queryKey: ['agent-properties', currentPage],
     queryData: {
       headers: {
         authorization: `Bearer ${jwtToken}`
       },
       query: {
-        page: 1,
+        page: currentPage,
         limit: 10
       }
     }
