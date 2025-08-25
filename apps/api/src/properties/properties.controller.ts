@@ -4,7 +4,7 @@ import { PropertiesService } from './properties.service';
 import { InquiriesService } from '../inquiries/inquiries.service';
 import { contract } from '@properview/api-contract';
 
-@Controller('properties')
+@Controller()
 @TsRest({
     jsonQuery: true,
     validateResponses: true

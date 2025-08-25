@@ -3,7 +3,7 @@ import { TsRest, tsRestHandler, TsRestHandler } from '@ts-rest/nest';
 import { AuthService } from './auth.service';
 import { contract } from '@properview/api-contract';
 
-@Controller('auth')
+@Controller()
 @TsRest({
     jsonQuery: true,
     validateResponses: true

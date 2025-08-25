@@ -6,7 +6,7 @@ import { AuthedAgent } from '../../core/decorators/authed-agent.decorator';
 import { Agent } from '@prisma/client';
 import { contract } from '@properview/api-contract';
 
-@Controller('properties')
+@Controller()
 @TsRest({
     jsonQuery: true,
     validateResponses: true
