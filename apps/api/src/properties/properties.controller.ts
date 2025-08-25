@@ -4,9 +4,9 @@ import { PropertiesService } from './properties.service';
 import { InquiriesService } from '../inquiries/inquiries.service';
 import { contract } from '@properview/api-contract';
 import { TsRestResponseError } from '@ts-rest/core';
-import { InvalidUUIDError } from 'src/core/errors/InvalidUUID.error';
+import { InvalidUUIDError } from '../core/errors/InvalidUUID.error';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { validateUuid } from 'src/utils';
+import { validateUuid } from '../utils';
 
 @Controller()
 @TsRest({
