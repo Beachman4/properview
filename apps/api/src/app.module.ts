@@ -14,7 +14,7 @@ import { MapboxModule } from './mapbox/mapbox.module';
   imports: [
     ConfigModule.forRoot({
       load: [appConfig],
-      validationSchema: configValidationSchema,
+      validate: (config) => configValidationSchema.parse(config),
     }),
     PrismaModule,
     PropertiesModule,
