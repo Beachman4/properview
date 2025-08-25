@@ -5,6 +5,8 @@ export const commonPropertySchema = z.object({
     title: z.string(),
     price: z.number(),
     address: z.string(),
+    addressLatitude: z.number(),
+    addressLongitude: z.number(),
     bedrooms: z.number(),
     bathrooms: z.number(),
     description: z.string(),

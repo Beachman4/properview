@@ -1,10 +1,13 @@
 import { initContract } from "@ts-rest/core";
 import { commonPropertySchema } from "../../schemas";
 import { z } from "zod";
+import { authHeaders } from ".";
 
 const propertySchema = commonPropertySchema.extend({
     agentId: z.string(),
     status: z.enum(['active', 'pending', 'sold']),
+    views: z.number(),
+    conversionRate: z.number()
 })
 
 export const paginatedPropertySchema = z.object({
@@ -18,11 +21,6 @@ export const paginatedPropertySchema = z.object({
         hasPrev: z.boolean(),
     })
 })
-
-const authHeaders = z.object({
-    authorization: z.string(),
-})
-
 
 const c = initContract()
 
@@ -97,6 +95,7 @@ export const propertiesRouter = c.router({
                 name: z.string(),
                 email: z.string(),
                 phone: z.string(),
+                message: z.string(),
                 createdAt: z.date(),
             })),
         }

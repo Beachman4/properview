@@ -55,6 +55,7 @@ export const propertiesRouter = c.router({
             name: z.string(),
             email: z.email(),
             phone: z.string(),
+            message: z.string(),
         }),
         responses: {
             200: z.object({

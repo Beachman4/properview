@@ -1,12 +1,8 @@
 import { initContract } from '@ts-rest/core'
 import { z } from 'zod'
+import { authHeaders } from '.'
 
 const c = initContract()
-
-const authHeaders = z.object({
-  authorization: z.string(),
-})
-
 export const authRouter = c.router({
   login: {
     method: 'POST',
