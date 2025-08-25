@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MapboxService } from './mapbox.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import MapiClient from '@mapbox/mapbox-sdk/lib/classes/mapi-client';
-import { ConfigService } from '@nestjs/config';
-import createNodeClient from '@mapbox/mapbox-sdk';
 
 @Module({
+  imports: [
+    ConfigModule
+  ],
   providers: [
     MapboxService,
     {
-      provide: MapiClient,
+      provide: 'mapbox',
       useFactory: (configService: ConfigService) => {
-        return createNodeClient({
+        return new MapiClient({
           accessToken: configService.getOrThrow<string>('mapbox.accessToken'),
         })
       },
