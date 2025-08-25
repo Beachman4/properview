@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "nodemon --watch ../../packages/api-contract --watch ./src src/main.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -23,7 +23,9 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:format": "prisma format",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "lint:fix": "pnpm lint --fix",
+    "format:fix": "pnpm format --write"
   },
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.16.1",

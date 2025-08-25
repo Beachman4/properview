@@ -10,6 +10,10 @@
   "scripts": {
     "dev": "tsc-watch",
     "build": "tsc",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:fix": "prettier --write src/**/*.ts --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -17,6 +21,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@properview/eslint-config": "workspace:*",
     "tsc-watch": "6.2.1"
   }
 }

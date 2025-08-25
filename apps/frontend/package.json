@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "lint:fix": "pnpm lint --fix",
+    "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
+    "lint": "next lint",
+    "format:fix": "pnpm format --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
