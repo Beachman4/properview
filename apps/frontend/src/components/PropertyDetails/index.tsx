@@ -38,6 +38,7 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
 
   tsr.public.properties.view.useQuery({
     queryKey: [],
+    enabled: property?.status === 200,
     queryData: {
       params: { id: propertyId }
     }
