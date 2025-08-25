@@ -44,7 +44,7 @@ export class PropertiesController {
         return tsRestHandler(contract.agent.properties.create, async ({ body }) => {
             const property = await this.propertiesService.create(agent.id, body);
             return {
-                status: 200,
+                status: 201,
                 body: property
             }
         })
