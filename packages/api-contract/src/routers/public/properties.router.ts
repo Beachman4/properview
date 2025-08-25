@@ -48,6 +48,13 @@ export const propertiesRouter = c.router({
             200: commonPropertySchema,
         }
     },
+    view: {
+        method: 'GET',
+        path: '/properties/:id/view',
+        responses: {
+            200: z.boolean(),
+        }
+    },
     submitInquiry: {
         method: 'POST',
         path: '/properties/:id/inquiry',

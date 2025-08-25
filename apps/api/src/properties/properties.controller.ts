@@ -41,6 +41,23 @@ export class PropertiesController {
         });
     }
 
+    @TsRestHandler(contract.public.properties.view)
+    view() {
+        return tsRestHandler(contract.public.properties.view, async ({ params, headers }) => {
+            let ipAddress = headers['cf-connecting-ip'] ?? headers['x-forwarded-for'] ?? '';
+
+            if (Array.isArray(ipAddress)) {
+                ipAddress = ipAddress[0];
+            }
+
+            await this.propertiesService.incrementView(params.id, ipAddress);
+            return {
+                status: 200,
+                body: true
+            };
+        });
+    }
+
     @TsRestHandler(contract.public.properties.submitInquiry)
     submitInquiry() {
         return tsRestHandler(contract.public.properties.submitInquiry, async ({ params, body }) => {

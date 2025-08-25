@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Inquiry, Prisma, Property, PropertyStatus } from '@prisma/client';
-import { contract } from '@properview/api-contract';
+import { AgentProperty, contract } from '@properview/api-contract';
 import { ServerInferRequest, ServerInferResponseBody } from '@ts-rest/core';
 import { MapboxService } from '../mapbox/mapbox.service';
 import { PrismaService } from '../prisma/prisma.service';
+import NodeCache from 'node-cache';
 
 @Injectable()
 export class PropertiesService {
     constructor(private readonly prisma: PrismaService, private readonly mapboxService: MapboxService) {}
+
+    private readonly cache = new NodeCache({ stdTTL: 60 * 5 });
 
     async paginate(queryParams: Exclude<ServerInferRequest<typeof contract.public.properties.list>["query"], "page" | "limit">, page: number = 1, limit: number = 10): Promise<ServerInferResponseBody<typeof contract.public.properties.list, 200>> {
         const where: Prisma.PropertyWhereInput = {
@@ -169,6 +172,24 @@ export class PropertiesService {
         return this.prisma.property.findUniqueOrThrow({
             where: {
                 id
+            }
+        })
+    }
+
+    async incrementView(id: string, ipAddress: string) {
+
+        if (this.cache.get(`view-${id}-${ipAddress}`)) {
+            return
+        }
+
+        this.cache.set(`view-${id}-${ipAddress}`, true);
+
+        return this.prisma.property.update({
+            where: {
+                id
+            },
+            data: {
+                views: { increment: 1 }
             }
         })
     }
