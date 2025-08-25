@@ -7,8 +7,11 @@ const propertySchema = commonPropertySchema.extend({
     agentId: z.string(),
     status: z.enum(['active', 'pending', 'sold']),
     views: z.number(),
+    inquiries: z.number(),
     conversionRate: z.number()
 })
+
+export type AgentProperty = z.infer<typeof propertySchema>
 
 export const paginatedPropertySchema = z.object({
     data: z.array(propertySchema),

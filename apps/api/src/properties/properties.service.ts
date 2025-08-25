@@ -135,7 +135,11 @@ export class PropertiesService {
                 skip: (page - 1) * limit,
                 take: limit,
                 include: {
-                    inquiries: true
+                    _count: {
+                        select: {
+                            inquiries: true
+                        }
+                    }
                 },
                 orderBy: {
                     createdAt: 'desc'
@@ -149,10 +153,7 @@ export class PropertiesService {
         ])
 
         return {
-            data: properties.map(property => ({
-                ...property,
-                conversionRate: this.calculateConversionRate(property, property.inquiries)
-            })),
+            data: properties.map(property => this.hydrateProperty(property, property._count.inquiries)),
             meta: {
                 total,
                 page,
@@ -179,12 +180,13 @@ export class PropertiesService {
                 agentId
             },
             include: {
-                inquiries: true
+                _count: {
+                    select: {
+                        inquiries: true
+                    }
+                }
             }
-        }).then(property => ({
-            ...property,
-            conversionRate: this.calculateConversionRate(property, property.inquiries)
-        }))
+        }).then(property => this.hydrateProperty(property, property._count.inquiries))
     }
 
     async create(agentId: string, data: ServerInferRequest<typeof contract.agent.properties.create>["body"]) {
@@ -198,7 +200,7 @@ export class PropertiesService {
                 addressLongitude: longitude,
                 addressLatitude: latitude
             }
-        })
+        }).then(property => this.hydrateProperty(property, 0))
     }
 
     async update(id: string, data: ServerInferRequest<typeof contract.agent.properties.update>["body"]) {
@@ -225,13 +227,14 @@ export class PropertiesService {
                 id
             },
             include: {
-                inquiries: true
+                _count: {
+                    select: {
+                        inquiries: true
+                    }
+                }
             },
             data: updateData
-        }).then(property => ({
-            ...property,
-            conversionRate: this.calculateConversionRate(property, property.inquiries)
-        }))
+        }).then(property => this.hydrateProperty(property, property._count.inquiries))
     }
 
     async delete(id: string) {
@@ -242,10 +245,18 @@ export class PropertiesService {
         })
     }
 
-    private calculateConversionRate(property: Property, inquiries: Inquiry[]) {
-        if (property.views === 0 || inquiries.length === 0) {
+    private calculateConversionRate(property: Property, totalInquiries: number) {
+        if (property.views === 0 || totalInquiries === 0) {
             return 0
         }
-        return inquiries.length / property.views
+        return totalInquiries / property.views
+    }
+
+    private hydrateProperty(property: Property, totalInquiries: number): AgentProperty {
+        return {
+            ...property,
+            inquiries: totalInquiries,
+            conversionRate: this.calculateConversionRate(property, totalInquiries)
+        }
     }
 }

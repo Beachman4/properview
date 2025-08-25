@@ -16,3 +16,5 @@ export const contract = c.router(
     },
   },
 )
+
+export { type AgentProperty } from './routers/agent/properties.router'
