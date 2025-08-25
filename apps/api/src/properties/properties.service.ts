@@ -224,10 +224,11 @@ export class PropertiesService {
         }).then(property => this.hydrateProperty(property, 0))
     }
 
-    async update(id: string, data: ServerInferRequest<typeof contract.agent.properties.update>["body"]) {
+    async update(id: string, agentId: string, data: ServerInferRequest<typeof contract.agent.properties.update>["body"]) {
         const currentProperty = await this.prisma.property.findUniqueOrThrow({
             where: {
-                id
+                id,
+                agentId
             }
         })
 
@@ -258,10 +259,18 @@ export class PropertiesService {
         }).then(property => this.hydrateProperty(property, property._count.inquiries))
     }
 
-    async delete(id: string) {
+    async delete(id: string, agentId: string) {
+        const property = await this.prisma.property.findUniqueOrThrow({
+            where: {
+                id,
+                agentId
+            }
+        })
+
         return this.prisma.property.delete({
             where: {
-                id
+                id,
+                agentId
             }
         })
     }

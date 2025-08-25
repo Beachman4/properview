@@ -54,7 +54,7 @@ export class PropertiesController {
     @TsRestHandler(contract.agent.properties.update)
     update(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.properties.update, async ({ params, body }) => {
-            const property = await this.propertiesService.update(params.id, body);
+            const property = await this.propertiesService.update(params.id, agent.id, body);
             return {
                 status: 200,
                 body: property
@@ -66,7 +66,7 @@ export class PropertiesController {
     @TsRestHandler(contract.agent.properties.delete)
     delete(@AuthedAgent() agent: Agent) {
         return tsRestHandler(contract.agent.properties.delete, async ({ params }) => {
-            await this.propertiesService.delete(params.id);
+            await this.propertiesService.delete(params.id, agent.id);
             return {
                 status: 204,
                 body: null
