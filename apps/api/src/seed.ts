@@ -3,6 +3,14 @@ import { hash } from "argon2";
 
 const prismaClient = new PrismaClient();
 
+
+function getRandomDateBetweenNowAndTwoWeeksAgo(): Date {
+    const now = new Date();
+    const twoWeeksAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+    const randomTime = twoWeeksAgo.getTime() + Math.random() * (now.getTime() - twoWeeksAgo.getTime());
+    return new Date(randomTime);
+}
+
 async function main() {
     let agent = await prismaClient.agent.findFirst({
         where: {
@@ -128,6 +136,7 @@ async function main() {
                 data: {
                     ...propertyData,
                     agentId: agent.id,
+                    createdAt: getRandomDateBetweenNowAndTwoWeeksAgo(),
                 }
             });
         }
