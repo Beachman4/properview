@@ -9,3 +9,4 @@ onlyBuiltDependencies:
 catalog:
   zod: ^4.0.17
   '@ts-rest/core': 3.53.0-rc.1
+  typescript: ^5
