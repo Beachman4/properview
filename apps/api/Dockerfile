@@ -14,6 +14,6 @@ RUN pnpm install --frozen-lockfile -P --ignore-scripts
 
 RUN cd apps/api && npx -y prisma generate
 
-CMD ["node", "apps/api/dist/src/main"]
+CMD ["node", "apps/api/dist/main"]
 
 EXPOSE 3000
