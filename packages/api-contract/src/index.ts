@@ -13,6 +13,23 @@ export const contract = c.router(
       404: z.object({
         message: z.string(),
       }),
+      400: z.union([
+        z.object({
+          bodyResult: z.object({
+            issues: z.array(
+              z.object({
+                code: z.string(),
+                format: z.string(),
+                message: z.string(),
+                path: z.array(z.string()),
+              }),
+            ),
+          }),
+        }),
+        z.object({
+          message: z.string(),
+        }),
+      ]),
     },
   },
 );

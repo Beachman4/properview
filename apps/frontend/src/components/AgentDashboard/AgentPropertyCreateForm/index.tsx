@@ -10,9 +10,12 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { tsr } from "@/utils/tsr";
 import { toast } from "sonner";
+import { isFetchError } from "@ts-rest/react-query/v5";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function AgentPropertyCreateForm() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     address: "",
@@ -29,8 +32,20 @@ export default function AgentPropertyCreateForm() {
         router.push(`/agent/properties/${data.body.id}`);
       },
       onError: (error) => {
-        toast.error("Failed to create property. Please try again.");
-        console.error("Error creating property:", error);
+        if (isFetchError(error)) {
+          setError("A network error occurred. Please try again.");
+          return;
+        }
+
+        if (error.status === 400) {
+          if ("bodyResult" in error.body) {
+            setError(
+              error.body.bodyResult.issues
+                .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+                .join(", "),
+            );
+          }
+        }
       },
     });
 
@@ -55,17 +70,17 @@ export default function AgentPropertyCreateForm() {
     const bathrooms = parseInt(formData.bathrooms);
 
     if (isNaN(price) || price <= 0) {
-      toast.error("Please enter a valid price");
+      setError("Please enter a valid price");
       return;
     }
 
     if (isNaN(bedrooms) || bedrooms < 0) {
-      toast.error("Please enter a valid number of bedrooms");
+      setError("Please enter a valid number of bedrooms");
       return;
     }
 
     if (isNaN(bathrooms) || bathrooms < 0) {
-      toast.error("Please enter a valid number of bathrooms");
+      setError("Please enter a valid number of bathrooms");
       return;
     }
 
@@ -105,6 +120,12 @@ export default function AgentPropertyCreateForm() {
           <CardTitle>Property Details</CardTitle>
         </CardHeader>
         <CardContent>
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

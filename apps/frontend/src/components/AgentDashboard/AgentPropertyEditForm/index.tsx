@@ -17,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { isFetchError } from "@ts-rest/react-query/v5";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AgentPropertyEditFormProps {
   propertyId: string;
@@ -26,6 +28,7 @@ export default function AgentPropertyEditForm({
   propertyId,
 }: AgentPropertyEditFormProps) {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     address: "",
@@ -51,8 +54,20 @@ export default function AgentPropertyEditForm({
         router.push(`/agent/properties/${propertyId}`);
       },
       onError: (error) => {
-        toast.error("Failed to update property. Please try again.");
-        console.error("Error updating property:", error);
+        if (isFetchError(error)) {
+          setError("A network error occurred. Please try again.");
+          return;
+        }
+
+        if (error.status === 400) {
+          if ("bodyResult" in error.body) {
+            setError(
+              error.body.bodyResult.issues
+                .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+                .join(", "),
+            );
+          }
+        }
       },
     });
 
@@ -74,6 +89,7 @@ export default function AgentPropertyEditForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     // Validate required fields
     if (
@@ -83,7 +99,7 @@ export default function AgentPropertyEditForm({
       !formData.bedrooms ||
       !formData.bathrooms
     ) {
-      toast.error("Please fill in all required fields");
+      setError("Please fill in all required fields");
       return;
     }
 
@@ -93,17 +109,17 @@ export default function AgentPropertyEditForm({
     const bathrooms = parseFloat(formData.bathrooms);
 
     if (isNaN(price) || price <= 0) {
-      toast.error("Please enter a valid price");
+      setError("Please enter a valid price");
       return;
     }
 
     if (isNaN(bedrooms) || bedrooms < 0) {
-      toast.error("Please enter a valid number of bedrooms");
+      setError("Please enter a valid number of bedrooms");
       return;
     }
 
     if (isNaN(bathrooms) || bathrooms < 0) {
-      toast.error("Please enter a valid number of bathrooms");
+      setError("Please enter a valid number of bathrooms");
       return;
     }
 
@@ -189,6 +205,12 @@ export default function AgentPropertyEditForm({
           <CardTitle>Property Details</CardTitle>
         </CardHeader>
         <CardContent>
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -277,6 +299,7 @@ export default function AgentPropertyEditForm({
             <div>
               <Label htmlFor="status">Property Status *</Label>
               <Select
+                key={`status-${formData.status}`}
                 value={formData.status}
                 onValueChange={(value) => handleInputChange("status", value)}
                 required

@@ -55,7 +55,7 @@ export const propertiesRouter = c.router({
     method: "POST",
     path: "/inquiries",
     body: z.object({
-      propertyId: z.string().uuid("Invalid property ID format"),
+      propertyId: z.string(),
       name: z
         .string()
         .min(2, "Name must be at least 2 characters")
@@ -65,10 +65,7 @@ export const propertiesRouter = c.router({
         .string()
         .min(10, "Phone number must be at least 10 digits")
         .max(20, "Phone number too long"),
-      message: z
-        .string()
-        .min(10, "Message must be at least 10 characters")
-        .max(1000, "Message too long"),
+      message: z.string(),
     }),
     responses: {
       200: z.object({
