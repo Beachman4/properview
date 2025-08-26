@@ -1,68 +1,75 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { ArrowLeft } from 'lucide-react'
-import { tsr } from '@/utils/tsr'
-import { toast } from 'sonner'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft } from "lucide-react";
+import { tsr } from "@/utils/tsr";
+import { toast } from "sonner";
 
 export default function AgentPropertyCreateForm() {
-  const router = useRouter()
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    title: '',
-    address: '',
-    price: '',
-    bedrooms: '',
-    bathrooms: '',
-    description: ''
-  })
+    title: "",
+    address: "",
+    price: "",
+    bedrooms: "",
+    bathrooms: "",
+    description: "",
+  });
 
-  const { mutate: createProperty, isPending } = tsr.agent.properties.create.useMutation({
-    onSuccess: (data) => {
-      toast.success('Property created successfully!')
-      router.push(`/agent/properties/${data.body.id}`)
-    },
-    onError: (error) => {
-      toast.error('Failed to create property. Please try again.')
-      console.error('Error creating property:', error)
-    }
-  })
+  const { mutate: createProperty, isPending } =
+    tsr.agent.properties.create.useMutation({
+      onSuccess: (data) => {
+        toast.success("Property created successfully!");
+        router.push(`/agent/properties/${data.body.id}`);
+      },
+      onError: (error) => {
+        toast.error("Failed to create property. Please try again.");
+        console.error("Error creating property:", error);
+      },
+    });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     // Validate required fields
-    if (!formData.title || !formData.address || !formData.price || !formData.bedrooms || !formData.bathrooms) {
-      toast.error('Please fill in all required fields')
-      return
+    if (
+      !formData.title ||
+      !formData.address ||
+      !formData.price ||
+      !formData.bedrooms ||
+      !formData.bathrooms
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
     }
 
     // Validate numeric fields
-    const price = parseFloat(formData.price)
-    const bedrooms = parseInt(formData.bedrooms)
-    const bathrooms = parseInt(formData.bathrooms)
+    const price = parseFloat(formData.price);
+    const bedrooms = parseInt(formData.bedrooms);
+    const bathrooms = parseInt(formData.bathrooms);
 
     if (isNaN(price) || price <= 0) {
-      toast.error('Please enter a valid price')
-      return
+      toast.error("Please enter a valid price");
+      return;
     }
 
     if (isNaN(bedrooms) || bedrooms < 0) {
-      toast.error('Please enter a valid number of bedrooms')
-      return
+      toast.error("Please enter a valid number of bedrooms");
+      return;
     }
 
     if (isNaN(bathrooms) || bathrooms < 0) {
-      toast.error('Please enter a valid number of bathrooms')
-      return
+      toast.error("Please enter a valid number of bathrooms");
+      return;
     }
 
-    try {  
+    try {
       createProperty({
         body: {
           title: formData.title,
@@ -70,18 +77,18 @@ export default function AgentPropertyCreateForm() {
           price,
           bedrooms,
           bathrooms,
-          description: formData.description || ''
-        }
-      })
+          description: formData.description || "",
+        },
+      });
     } catch (error) {
-      toast.error('Failed to validate address. Please try again.')
-      console.error('Geocoding error:', error)
+      toast.error("Failed to validate address. Please try again.");
+      console.error("Geocoding error:", error);
     }
-  }
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="space-y-6">
@@ -111,7 +118,7 @@ export default function AgentPropertyCreateForm() {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  onChange={(e) => handleInputChange("title", e.target.value)}
                   placeholder="e.g., Beautiful 3BR Home in Downtown"
                   required
                 />
@@ -122,7 +129,7 @@ export default function AgentPropertyCreateForm() {
                 <Input
                   id="address"
                   value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
                   placeholder="e.g., 123 Main St, City, State 12345"
                   required
                 />
@@ -136,7 +143,7 @@ export default function AgentPropertyCreateForm() {
                   min="0"
                   step="1000"
                   value={formData.price}
-                  onChange={(e) => handleInputChange('price', e.target.value)}
+                  onChange={(e) => handleInputChange("price", e.target.value)}
                   placeholder="e.g., 450000"
                   required
                 />
@@ -149,7 +156,9 @@ export default function AgentPropertyCreateForm() {
                   type="number"
                   min="0"
                   value={formData.bedrooms}
-                  onChange={(e) => handleInputChange('bedrooms', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("bedrooms", e.target.value)
+                  }
                   placeholder="e.g., 3"
                   required
                 />
@@ -163,7 +172,9 @@ export default function AgentPropertyCreateForm() {
                   min="0"
                   step="0.5"
                   value={formData.bathrooms}
-                  onChange={(e) => handleInputChange('bathrooms', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("bathrooms", e.target.value)
+                  }
                   placeholder="e.g., 2.5"
                   required
                 />
@@ -176,7 +187,9 @@ export default function AgentPropertyCreateForm() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 placeholder="Describe the property features, amenities, and highlights..."
                 rows={4}
               />
@@ -193,12 +206,12 @@ export default function AgentPropertyCreateForm() {
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? 'Creating Property...' : 'Create Property'}
+                {isPending ? "Creating Property..." : "Create Property"}
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

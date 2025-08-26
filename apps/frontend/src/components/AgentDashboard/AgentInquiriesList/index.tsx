@@ -1,43 +1,45 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { 
-  Search, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Search,
   Mail,
   Phone,
   User,
   ChevronLeft,
   ChevronRight,
-  Building
-} from 'lucide-react'
-import { tsr } from '@/utils/tsr'
+  Building,
+  ExternalLink,
+} from "lucide-react";
+import { tsr } from "@/utils/tsr";
+import Link from "next/link";
 
 export default function AgentInquiriesList() {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: inquiriesData, isLoading } = tsr.agent.inquiries.list.useQuery({
-    queryKey: ['agent-inquiries-all', currentPage],
+    queryKey: ["agent-inquiries-all", currentPage],
     queryData: {
-      query: { page: currentPage, limit: 20 }
-    }
-  })
+      query: { page: currentPage, limit: 20 },
+    },
+  });
 
   const formatDate = (date: Date) => {
-    const now = new Date()
-    const diff = now.getTime() - new Date(date).getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
-    if (days === 0) return 'Today'
-    if (days === 1) return 'Yesterday'
-    if (days < 7) return `${days} days ago`
-    if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-    if (days < 365) return `${Math.floor(days / 30)} months ago`
-    return `${Math.floor(days / 365)} years ago`
-  }
+    const now = new Date();
+    const diff = now.getTime() - new Date(date).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days === 0) return "Today";
+    if (days === 1) return "Yesterday";
+    if (days < 7) return `${days} days ago`;
+    if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+    if (days < 365) return `${Math.floor(days / 30)} months ago`;
+    return `${Math.floor(days / 365)} years ago`;
+  };
 
   if (isLoading) {
     return (
@@ -62,11 +64,11 @@ export default function AgentInquiriesList() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
-  const inquiries = inquiriesData?.body
-  const hasInquiries = inquiries?.data && inquiries.data.length > 0
+  const inquiries = inquiriesData?.body;
+  const hasInquiries = inquiries?.data && inquiries.data.length > 0;
 
   return (
     <div className="space-y-6">
@@ -96,14 +98,18 @@ export default function AgentInquiriesList() {
               No inquiries yet
             </h3>
             <p className="text-gray-600 mb-4">
-              Customer inquiries will appear here when they're interested in your properties.
+              Customer inquiries will appear here when they're interested in
+              your properties.
             </p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {inquiriesData?.body.data.map((inquiry) => (
-            <Card key={inquiry.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={inquiry.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -115,20 +121,26 @@ export default function AgentInquiriesList() {
                       <p className="text-sm text-muted-foreground">
                         {formatDate(inquiry.createdAt)}
                       </p>
+                      {inquiry.property && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <Building className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">
+                            Inquiry for: {inquiry.property.title}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <Badge variant="outline">
-                    New Inquiry
-                  </Badge>
+                  <Badge variant="outline">New Inquiry</Badge>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 {/* Contact Information */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-muted-foreground" />
-                    <a 
+                    <a
                       href={`mailto:${inquiry.email}`}
                       className="text-primary hover:underline text-sm"
                     >
@@ -138,7 +150,7 @@ export default function AgentInquiriesList() {
                   {inquiry.phone && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-muted-foreground" />
-                      <a 
+                      <a
                         href={`tel:${inquiry.phone}`}
                         className="text-primary hover:underline text-sm"
                       >
@@ -162,17 +174,22 @@ export default function AgentInquiriesList() {
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Building className="w-4 h-4" />
                     <span>Property inquiry</span>
+                    {inquiry.property && (
+                      <span className="text-xs">
+                        • ID: {inquiry.property.id}
+                      </span>
+                    )}
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
-                      <Mail className="w-4 h-4 mr-2" />
-                      Reply
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Phone className="w-4 h-4 mr-2" />
-                      Call
-                    </Button>
+
+                  <div className="flex gap-2 flex-wrap">
+                    {inquiry.property && (
+                      <Link href={`/agent/properties/${inquiry.property.id}`}>
+                        <Button size="sm" variant="secondary">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          View Property
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -186,10 +203,10 @@ export default function AgentInquiriesList() {
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
                     Page {inquiries.meta.page} of {inquiries.meta.totalPages}
-                    {' • '}
+                    {" • "}
                     {inquiries.meta.total} total inquiries
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -200,24 +217,31 @@ export default function AgentInquiriesList() {
                       <ChevronLeft className="w-4 h-4 mr-1" />
                       Previous
                     </Button>
-                    
+
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: Math.min(5, inquiries.meta.totalPages) }, (_, i) => {
-                        const page = i + 1
-                        return (
-                          <Button
-                            key={page}
-                            variant={page === inquiries.meta.page ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentPage(page)}
-                            className="w-8 h-8 p-0"
-                          >
-                            {page}
-                          </Button>
-                        )
-                      })}
+                      {Array.from(
+                        { length: Math.min(5, inquiries.meta.totalPages) },
+                        (_, i) => {
+                          const page = i + 1;
+                          return (
+                            <Button
+                              key={page}
+                              variant={
+                                page === inquiries.meta.page
+                                  ? "default"
+                                  : "outline"
+                              }
+                              size="sm"
+                              onClick={() => setCurrentPage(page)}
+                              className="w-8 h-8 p-0"
+                            >
+                              {page}
+                            </Button>
+                          );
+                        },
+                      )}
                     </div>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -235,5 +259,5 @@ export default function AgentInquiriesList() {
         </div>
       )}
     </div>
-  )
+  );
 }
