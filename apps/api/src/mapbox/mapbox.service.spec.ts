@@ -6,7 +6,13 @@ describe('MapboxService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MapboxService],
+      providers: [
+        MapboxService,
+        {
+          provide: 'mapbox',
+          useValue: {},
+        },
+      ],
     }).compile();
 
     service = module.get<MapboxService>(MapboxService);

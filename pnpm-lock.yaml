@@ -129,6 +129,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.17.2)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.17.2)(typescript@5.9.2))
+      nest-spectator:
+        specifier: ^0.0.10
+        version: 0.0.10
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
@@ -4823,6 +4826,9 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  nest-spectator@0.0.10:
+    resolution: {integrity: sha512-+4g54a64fSiWGOP9T6XHTQ2x3gUaVodlPIZPL/677szfYwNGCTFVhno2Mq7xhGcZbhAStky+7xuFelIYeBm6yw==}
 
   next-themes@0.4.6:
     resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
@@ -11223,6 +11229,8 @@ snapshots:
   negotiator@1.0.0: {}
 
   neo-async@2.6.2: {}
+
+  nest-spectator@0.0.10: {}
 
   next-themes@0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
