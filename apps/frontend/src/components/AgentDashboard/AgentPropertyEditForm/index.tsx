@@ -161,7 +161,7 @@ export default function AgentPropertyEditForm({
               Property not found
             </h3>
             <p className="text-muted-foreground">
-              The property you're trying to edit doesn't exist.
+              The property you&apos;re trying to edit doesn&apos;t exist.
             </p>
           </CardContent>
         </Card>

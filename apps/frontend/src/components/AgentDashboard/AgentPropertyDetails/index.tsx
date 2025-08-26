@@ -116,7 +116,8 @@ export default function AgentPropertyDetails({
               Property not found
             </h3>
             <p className="text-muted-foreground">
-              The property you're looking for doesn't exist or has been removed.
+              The property you&apos;re looking for doesn&apos;t exist or has
+              been removed.
             </p>
           </CardContent>
         </Card>
@@ -406,7 +407,7 @@ function InquiriesSection({ propertyId }: { propertyId: string }) {
                   {inquiry.message && (
                     <div className="bg-muted/50 p-3 rounded-md">
                       <p className="text-sm text-muted-foreground italic">
-                        "{inquiry.message}"
+                        &quot;{inquiry.message}&quot;
                       </p>
                     </div>
                   )}

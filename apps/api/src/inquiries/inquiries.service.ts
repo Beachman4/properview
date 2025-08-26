@@ -32,7 +32,9 @@ export class InquiriesService {
     page: number = 1,
     limit: number = 10,
     propertyId?: string,
-  ): Promise<ServerInferResponseBody<typeof contract.agent.inquiries.list, 200>> {
+  ): Promise<
+    ServerInferResponseBody<typeof contract.agent.inquiries.list, 200>
+  > {
     const where: Prisma.InquiryWhereInput = {
       ...(propertyId && { propertyId }),
       property: {

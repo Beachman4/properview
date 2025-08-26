@@ -51,22 +51,22 @@ describe('PropertiesService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await createTestingModuleFactory({
-              providers: [
-          PropertiesService,
-          {
-            provide: PrismaService,
-            useValue: {
-              $transaction: jest.fn(),
-              $queryRaw: jest.fn(),
-              property: {
-                findMany: jest.fn(),
-                count: jest.fn(),
-                findUniqueOrThrow: jest.fn(),
-                update: jest.fn(),
-              },
+      providers: [
+        PropertiesService,
+        {
+          provide: PrismaService,
+          useValue: {
+            $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
+            property: {
+              findMany: jest.fn(),
+              count: jest.fn(),
+              findUniqueOrThrow: jest.fn(),
+              update: jest.fn(),
             },
           },
-        ],
+        },
+      ],
       mocks: [MapboxService],
     }).compile();
 
@@ -191,7 +191,7 @@ describe('PropertiesService', () => {
         };
         const mockCoordinates: [number, number] = [-74.006, 40.7128];
         const mockPropertiesWithDistance = [
-          { ...mockProperty, distance_miles: 2.5 }
+          { ...mockProperty, distance_miles: 2.5 },
         ];
         const mockTotal = [{ total: BigInt(1) }];
 
@@ -204,14 +204,18 @@ describe('PropertiesService', () => {
         const result = await service.paginate(queryParams as any, 1, 10);
 
         // Assert
-        expect(mapboxService.getCoordinates).toHaveBeenCalledWith('New York, NY');
+        expect(mapboxService.getCoordinates).toHaveBeenCalledWith(
+          'New York, NY',
+        );
         expect(prismaService.$queryRaw).toHaveBeenCalledTimes(2);
-        
+
         // Verify the distance query is called
         expect(prismaService.$queryRaw).toHaveBeenCalledWith(
           expect.objectContaining({
-            strings: expect.arrayContaining([expect.stringContaining('distance_miles')])
-          })
+            strings: expect.arrayContaining([
+              expect.stringContaining('distance_miles'),
+            ]),
+          }),
         );
 
         expect(result).toEqual({
@@ -328,7 +332,9 @@ describe('PropertiesService', () => {
       };
 
       prismaService.property.findUniqueOrThrow.mockResolvedValue(mockProperty);
-      prismaService.property.update.mockResolvedValue(mockPropertyWithInquiries);
+      prismaService.property.update.mockResolvedValue(
+        mockPropertyWithInquiries,
+      );
 
       // Act
       const result = await service.update(propertyId, agentId, updateData);
@@ -368,17 +374,21 @@ describe('PropertiesService', () => {
         description: 'Updated description',
         status: PropertyStatus.active,
       };
-      const newCoordinates: [number, number] = [-73.935, 40.730];
+      const newCoordinates: [number, number] = [-73.935, 40.73];
 
       prismaService.property.findUniqueOrThrow.mockResolvedValue(mockProperty);
       mapboxService.getCoordinates.mockResolvedValue(newCoordinates);
-      prismaService.property.update.mockResolvedValue(mockPropertyWithInquiries);
+      prismaService.property.update.mockResolvedValue(
+        mockPropertyWithInquiries,
+      );
 
       // Act
       const result = await service.update(propertyId, agentId, updateData);
 
       // Assert
-      expect(mapboxService.getCoordinates).toHaveBeenCalledWith('456 New Street');
+      expect(mapboxService.getCoordinates).toHaveBeenCalledWith(
+        '456 New Street',
+      );
 
       expect(prismaService.property.update).toHaveBeenCalledWith({
         where: { id: propertyId },
@@ -390,7 +400,7 @@ describe('PropertiesService', () => {
         data: {
           ...updateData,
           addressLongitude: -73.935,
-          addressLatitude: 40.730,
+          addressLatitude: 40.73,
         },
       });
 
@@ -410,7 +420,10 @@ describe('PropertiesService', () => {
         const inquiries = 5;
 
         // Act
-        const result = (service as any).calculateConversionRate(property, inquiries);
+        const result = (service as any).calculateConversionRate(
+          property,
+          inquiries,
+        );
 
         // Assert
         expect(result).toBe(0.05); // 5/100 = 0.05
@@ -422,7 +435,10 @@ describe('PropertiesService', () => {
         const inquiries = 5;
 
         // Act
-        const result = (service as any).calculateConversionRate(property, inquiries);
+        const result = (service as any).calculateConversionRate(
+          property,
+          inquiries,
+        );
 
         // Assert
         expect(result).toBe(0);
@@ -434,7 +450,10 @@ describe('PropertiesService', () => {
         const inquiries = 0;
 
         // Act
-        const result = (service as any).calculateConversionRate(property, inquiries);
+        const result = (service as any).calculateConversionRate(
+          property,
+          inquiries,
+        );
 
         // Assert
         expect(result).toBe(0);
@@ -446,7 +465,10 @@ describe('PropertiesService', () => {
         const inquiries = 0;
 
         // Act
-        const result = (service as any).calculateConversionRate(property, inquiries);
+        const result = (service as any).calculateConversionRate(
+          property,
+          inquiries,
+        );
 
         // Assert
         expect(result).toBe(0);

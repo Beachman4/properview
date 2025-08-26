@@ -1,53 +1,57 @@
-'use client'
+"use client";
 
-import { useContext, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { tsr } from '@/utils/tsr'
-import { toast } from 'sonner'
-import { Eye, EyeOff } from 'lucide-react'
-import { AgentAuthContext } from '@/providers/agent-auth.provider'
+import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { tsr } from "@/utils/tsr";
+import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+import { AgentAuthContext } from "@/providers/agent-auth.provider";
 
 export default function AgentLogin() {
-  const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
-  const { setJwtToken } = useContext(AgentAuthContext)
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const { setJwtToken } = useContext(AgentAuthContext);
   const [formData, setFormData] = useState({
-    email: 'agent@properview.com',
-    password: 'test123'
-  })
+    email: "agent@properview.com",
+    password: "test123",
+  });
 
-  const { mutate: login, isPending, error } = tsr.agent.auth.login.useMutation({
+  const {
+    mutate: login,
+    isPending,
+    error,
+  } = tsr.agent.auth.login.useMutation({
     onSuccess: (data) => {
       // Store the token in localStorage
-      setJwtToken(data.body.token)
-      toast.success('Login successful!')
-      router.push('/agent')
+      setJwtToken(data.body.token);
+      toast.success("Login successful!");
+      router.push("/agent");
     },
     onError: (error) => {
-      toast.error('Login failed. Please check your credentials.')
-    }
-  })
+      toast.error("Login failed. Please check your credentials.");
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields')
-      return
+      toast.error("Please fill in all fields");
+      return;
     }
 
     login({
       body: {
         email: formData.email,
-        password: formData.password
-      }
-    })
-  }
+        password: formData.password,
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -60,7 +64,7 @@ export default function AgentLogin() {
             Sign in to your agent account
           </p>
         </div>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
@@ -73,20 +77,27 @@ export default function AgentLogin() {
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
                   placeholder="agent@example.com"
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
                     placeholder="Enter your password"
                     required
                   />
@@ -113,18 +124,14 @@ export default function AgentLogin() {
                   </AlertDescription>
                 </Alert>
               )}
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isPending}
-              >
-                {isPending ? 'Signing in...' : 'Sign In'}
+
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Signing in..." : "Sign In"}
               </Button>
             </form>
           </CardContent>
         </Card>
-        
+
         <div className="text-center">
           <p className="text-sm text-gray-600">
             Need an agent account? Contact your administrator.
@@ -132,5 +139,5 @@ export default function AgentLogin() {
         </div>
       </div>
     </div>
-  )
+  );
 }

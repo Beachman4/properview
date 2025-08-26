@@ -1,7 +1,7 @@
-import { initContract } from '@ts-rest/core'
-import { z } from 'zod'
-import { agentRouter, publicRouter } from './routers'
-const c = initContract()
+import { initContract } from "@ts-rest/core";
+import { z } from "zod";
+import { agentRouter, publicRouter } from "./routers";
+const c = initContract();
 
 export const contract = c.router(
   {
@@ -15,6 +15,6 @@ export const contract = c.router(
       }),
     },
   },
-)
+);
 
-export { type AgentProperty } from './routers/agent/properties.router'
+export { type AgentProperty } from "./routers/agent/properties.router";
