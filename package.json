@@ -7,10 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
+    "dev": "pnpm -r --parallel dev",
     "format": "pnpm -r format",
     "format:fix": "pnpm -r format:fix",
     "prepare": "husky",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "setup": "pnpm install && pnpm run prepare && pnpm run -r setup"
   },
   "keywords": [],
   "author": "",

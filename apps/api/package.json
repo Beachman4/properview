@@ -25,7 +25,8 @@
     "prisma:format": "prisma format",
     "prisma:seed": "prisma db seed",
     "lint:fix": "pnpm lint --fix",
-    "format:fix": "pnpm format --write"
+    "format:fix": "pnpm format --write",
+    "setup": "node -e \"const fs=require('fs');if(!fs.existsSync('.env')&&fs.existsSync('.env.example'))fs.copyFileSync('.env.example','.env')\" && docker compose up -d && pnpm prisma:migrate && pnpm prisma:seed"
   },
   "dependencies": {
     "@mapbox/mapbox-sdk": "^0.16.1",
