@@ -5,7 +5,7 @@ import Listings from "@/components/Listings";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     priceMin: string | null;
     priceMax: string | null;
     bedroomsMin: string | null;
@@ -15,7 +15,7 @@ export default async function Home({
     location: string | null;
     sortBy: string | null;
     sortOrder: string | null;
-  };
+  }>;
 }) {
   const awaitedSearchParams = await searchParams;
   const filters = {
