@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { InquiriesService } from './inquiries.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { createTestingModuleFactory } from 'nest-spectator';

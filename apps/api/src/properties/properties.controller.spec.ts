@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { PropertiesController } from './properties.controller';
 import { createTestingModuleFactory } from 'nest-spectator';
 import { InquiriesService } from '../inquiries/inquiries.service';

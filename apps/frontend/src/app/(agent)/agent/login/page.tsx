@@ -27,12 +27,11 @@ export default function AgentLogin() {
     error,
   } = tsr.agent.auth.login.useMutation({
     onSuccess: (data) => {
-      // Store the token in localStorage
       setJwtToken(data.body.token);
       toast.success("Login successful!");
       router.push("/agent");
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Login failed. Please check your credentials.");
     },
   });

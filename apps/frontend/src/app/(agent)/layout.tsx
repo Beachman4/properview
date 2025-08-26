@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -16,12 +16,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Home, Building, MessageSquare, User, LogOut } from "lucide-react";
+import { Building, MessageSquare, User, LogOut } from "lucide-react";
 import { useContext } from "react";
 import { toast } from "sonner";
 import { AgentAuthContext } from "@/providers/agent-auth.provider";
 import Providers from "@/providers/Providers";
-import { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AgentAuthProvider } from "@/providers/agent-auth.provider";
@@ -43,7 +42,6 @@ const geistMono = Geist_Mono({
 
 function AgentDashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { userData, logout } = useContext(AgentAuthContext);
 
   const handleLogout = () => {

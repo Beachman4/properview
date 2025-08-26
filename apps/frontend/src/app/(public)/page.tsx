@@ -1,5 +1,5 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import { tsrQueryClient, tsr } from "@/utils/tsr";
+import { tsrQueryClient } from "@/utils/tsr";
 import Listings from "@/components/Listings";
 
 export default async function Home({

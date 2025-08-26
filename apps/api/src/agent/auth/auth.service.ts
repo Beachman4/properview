@@ -53,7 +53,7 @@ export class AuthService {
       if (user.email !== decodedJwtToken.email) {
         return false;
       }
-    } catch (error) {
+    } catch {
       return false;
     }
 

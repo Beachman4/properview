@@ -53,7 +53,7 @@ export function AgentAuthProvider({ children }: { children: React.ReactNode }) {
       }
       return null;
     });
-  }, [jwtToken, setCookie]);
+  }, [jwtToken, setCookie, removeCookie, cookies.jwtToken]);
 
   useEffect(() => {
     if (cookies.jwtToken) {

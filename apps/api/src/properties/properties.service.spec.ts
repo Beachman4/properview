@@ -1,12 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PropertiesService } from './properties.service';
+import { TestingModule } from '@nestjs/testing';
 import { createTestingModuleFactory } from 'nest-spectator';
+import { PropertiesService } from './properties.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { MapboxService } from '../mapbox/mapbox.service';
 import { PropertyStatus, Property } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { contract } from '@properview/api-contract';
-import { ServerInferRequest } from '@ts-rest/core';
 
 type PaginateQueryParams = {
   sortOrder: 'asc' | 'desc';
@@ -20,9 +17,22 @@ type PaginateQueryParams = {
   location?: string;
 };
 
+type MockedPrismaService = {
+  $transaction: jest.MockedFunction<PrismaService['$transaction']>;
+  $queryRaw: jest.MockedFunction<PrismaService['$queryRaw']>;
+  property: {
+    findMany: jest.MockedFunction<PrismaService['property']['findMany']>;
+    count: jest.MockedFunction<PrismaService['property']['count']>;
+    findUniqueOrThrow: jest.MockedFunction<
+      PrismaService['property']['findUniqueOrThrow']
+    >;
+    update: jest.MockedFunction<PrismaService['property']['update']>;
+  };
+};
+
 describe('PropertiesService', () => {
   let service: PropertiesService;
-  let prismaService: any;
+  let prismaService: MockedPrismaService;
   let mapboxService: jest.Mocked<MapboxService>;
 
   const mockProperty: Property = {
@@ -97,7 +107,7 @@ describe('PropertiesService', () => {
         const expectedProperties = [mockProperty];
         const expectedTotal = 1;
 
-        prismaService.$transaction.mockImplementation(async (queries) => {
+        prismaService.$transaction.mockImplementation(async () => {
           // Simulate executing the queries
           const findManyResult = expectedProperties;
           const countResult = expectedTotal;
@@ -105,7 +115,7 @@ describe('PropertiesService', () => {
         });
 
         // Act
-        const result = await service.paginate(queryParams as any, 1, 10);
+        const result = await service.paginate(queryParams, 1, 10);
 
         // Assert
         expect(prismaService.$transaction).toHaveBeenCalledTimes(1);
@@ -130,12 +140,12 @@ describe('PropertiesService', () => {
           bathroomsMax: 3,
           sortOrder: 'desc',
         };
-        prismaService.$transaction.mockImplementation(async (queries) => {
+        prismaService.$transaction.mockImplementation(async () => {
           return [[], 0];
         });
 
         // Act
-        await service.paginate(queryParams as any, 1, 10);
+        await service.paginate(queryParams, 1, 10);
 
         // Assert
         expect(prismaService.$transaction).toHaveBeenCalledTimes(1);
@@ -146,12 +156,12 @@ describe('PropertiesService', () => {
         const queryParams: PaginateQueryParams = {
           sortOrder: 'desc',
         };
-        prismaService.$transaction.mockImplementation(async (queries) => {
+        prismaService.$transaction.mockImplementation(async () => {
           return [[], 0];
         });
 
         // Act
-        await service.paginate(queryParams as any, 1, 10);
+        await service.paginate(queryParams, 1, 10);
 
         // Assert
         expect(prismaService.$transaction).toHaveBeenCalledTimes(1);
@@ -162,12 +172,12 @@ describe('PropertiesService', () => {
         const queryParams: PaginateQueryParams = {
           sortOrder: 'desc',
         };
-        prismaService.$transaction.mockImplementation(async (queries) => {
+        prismaService.$transaction.mockImplementation(async () => {
           return [[], 25];
         });
 
         // Act
-        const result = await service.paginate(queryParams as any, 2, 10);
+        const result = await service.paginate(queryParams, 2, 10);
 
         // Assert
         expect(result.meta).toEqual({
@@ -201,7 +211,7 @@ describe('PropertiesService', () => {
           .mockResolvedValueOnce(mockTotal);
 
         // Act
-        const result = await service.paginate(queryParams as any, 1, 10);
+        const result = await service.paginate(queryParams, 1, 10);
 
         // Assert
         expect(mapboxService.getCoordinates).toHaveBeenCalledWith(
@@ -251,7 +261,7 @@ describe('PropertiesService', () => {
           .mockResolvedValueOnce([{ total: BigInt(0) }]);
 
         // Act
-        await service.paginate(queryParams as any, 1, 10);
+        await service.paginate(queryParams, 1, 10);
 
         // Assert
         expect(mapboxService.getCoordinates).toHaveBeenCalledWith('Boston, MA');
@@ -412,99 +422,105 @@ describe('PropertiesService', () => {
     });
   });
 
-  describe('private helper methods', () => {
-    describe('calculateConversionRate', () => {
-      it('should calculate conversion rate correctly', () => {
+  describe('private helper methods (tested through public methods)', () => {
+    describe('calculateConversionRate and hydrateProperty', () => {
+      it('should calculate conversion rate correctly through paginateByAgentId', async () => {
         // Arrange
-        const property = { ...mockProperty, views: 100 };
-        const inquiries = 5;
+        const agentId = 'agent-1';
+        const propertyWithInquiries = {
+          ...mockProperty,
+          views: 100,
+          _count: { inquiries: 5 },
+        };
+
+        prismaService.$transaction.mockImplementation(async () => {
+          return [[propertyWithInquiries], 1];
+        });
 
         // Act
-        const result = (service as any).calculateConversionRate(
-          property,
-          inquiries,
-        );
+        const result = await service.paginateByAgentId(agentId, 1, 10);
 
         // Assert
-        expect(result).toBe(0.05); // 5/100 = 0.05
-      });
-
-      it('should return 0 when views is 0', () => {
-        // Arrange
-        const property = { ...mockProperty, views: 0 };
-        const inquiries = 5;
-
-        // Act
-        const result = (service as any).calculateConversionRate(
-          property,
-          inquiries,
-        );
-
-        // Assert
-        expect(result).toBe(0);
-      });
-
-      it('should return 0 when inquiries is 0', () => {
-        // Arrange
-        const property = { ...mockProperty, views: 100 };
-        const inquiries = 0;
-
-        // Act
-        const result = (service as any).calculateConversionRate(
-          property,
-          inquiries,
-        );
-
-        // Assert
-        expect(result).toBe(0);
-      });
-
-      it('should return 0 when both views and inquiries are 0', () => {
-        // Arrange
-        const property = { ...mockProperty, views: 0 };
-        const inquiries = 0;
-
-        // Act
-        const result = (service as any).calculateConversionRate(
-          property,
-          inquiries,
-        );
-
-        // Assert
-        expect(result).toBe(0);
-      });
-    });
-
-    describe('hydrateProperty', () => {
-      it('should hydrate property with inquiries and conversion rate', () => {
-        // Arrange
-        const property = { ...mockProperty, views: 100 };
-        const inquiries = 10;
-
-        // Act
-        const result = (service as any).hydrateProperty(property, inquiries);
-
-        // Assert
-        expect(result).toEqual({
-          ...property,
-          inquiries: 10,
-          conversionRate: 0.1, // 10/100 = 0.1
+        expect(result.data[0]).toEqual({
+          ...propertyWithInquiries,
+          inquiries: 5,
+          conversionRate: 0.05, // 5/100 = 0.05
         });
       });
 
-      it('should hydrate property with zero conversion rate when no views', () => {
+      it('should return 0 conversion rate when views is 0 through paginateByAgentId', async () => {
         // Arrange
-        const property = { ...mockProperty, views: 0 };
-        const inquiries = 5;
+        const agentId = 'agent-1';
+        const propertyWithInquiries = {
+          ...mockProperty,
+          views: 0,
+          _count: { inquiries: 5 },
+        };
+
+        prismaService.$transaction.mockImplementation(async () => {
+          return [[propertyWithInquiries], 1];
+        });
 
         // Act
-        const result = (service as any).hydrateProperty(property, inquiries);
+        const result = await service.paginateByAgentId(agentId, 1, 10);
+
+        // Assert
+        expect(result.data[0]).toEqual({
+          ...propertyWithInquiries,
+          inquiries: 5,
+          conversionRate: 0,
+        });
+      });
+
+      it('should return 0 conversion rate when inquiries is 0 through paginateByAgentId', async () => {
+        // Arrange
+        const agentId = 'agent-1';
+        const propertyWithInquiries = {
+          ...mockProperty,
+          views: 100,
+          _count: { inquiries: 0 },
+        };
+
+        prismaService.$transaction.mockImplementation(async () => {
+          return [[propertyWithInquiries], 1];
+        });
+
+        // Act
+        const result = await service.paginateByAgentId(agentId, 1, 10);
+
+        // Assert
+        expect(result.data[0]).toEqual({
+          ...propertyWithInquiries,
+          inquiries: 0,
+          conversionRate: 0,
+        });
+      });
+
+      it('should hydrate property with inquiries and conversion rate through retrieveByIdAndAgentId', async () => {
+        // Arrange
+        const propertyId = 'property-1';
+        const agentId = 'agent-1';
+        const propertyWithInquiries = {
+          ...mockProperty,
+          views: 100,
+          _count: { inquiries: 10 },
+        };
+
+        prismaService.property.findUniqueOrThrow.mockResolvedValue(
+          propertyWithInquiries,
+        );
+
+        // Act
+        const result = await service.retrieveByIdAndAgentId(
+          propertyId,
+          agentId,
+        );
 
         // Assert
         expect(result).toEqual({
-          ...property,
-          inquiries: 5,
-          conversionRate: 0,
+          ...propertyWithInquiries,
+          inquiries: 10,
+          conversionRate: 0.1, // 10/100 = 0.1
         });
       });
     });

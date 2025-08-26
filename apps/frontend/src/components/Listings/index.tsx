@@ -22,7 +22,7 @@ import { Slider } from "@/components/ui/slider";
 import { useDebouncedCallback } from "use-debounce";
 import { ClientInferResponses } from "@ts-rest/core";
 import { contract } from "@properview/api-contract";
-import { List, Map, MapPin, Bed, Bath } from "lucide-react";
+import { List, Map, MapPin } from "lucide-react";
 import mapboxgl from "mapbox-gl";
 
 // Set Mapbox access token

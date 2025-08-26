@@ -1,10 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { createTestingModuleFactory } from 'nest-spectator';
 import { AgentsService } from '../agents/agents.service';
 import { JwtService } from '@nestjs/jwt';
 import { TsRestException } from '@ts-rest/nest';
-import { contract } from '@properview/api-contract';
 import { Agent } from '@prisma/client';
 import { JwtToken } from './jwtToken';
 import * as argon2 from 'argon2';

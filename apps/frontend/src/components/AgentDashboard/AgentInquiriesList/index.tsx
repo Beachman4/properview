@@ -4,9 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
-  Search,
   Mail,
   Phone,
   User,
@@ -98,7 +96,7 @@ export default function AgentInquiriesList() {
               No inquiries yet
             </h3>
             <p className="text-gray-600 mb-4">
-              Customer inquiries will appear here when they're interested in
+              Customer inquiries will appear here when they&apos;re interested
               your properties.
             </p>
           </CardContent>
@@ -164,7 +162,7 @@ export default function AgentInquiriesList() {
                 {inquiry.message && (
                   <div className="bg-muted/50 p-4 rounded-lg">
                     <p className="text-sm leading-relaxed">
-                      "{inquiry.message}"
+                      &quot;{inquiry.message}&quot;
                     </p>
                   </div>
                 )}

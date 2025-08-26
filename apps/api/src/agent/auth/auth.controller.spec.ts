@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { createTestingModuleFactory } from 'nest-spectator';
 import { AuthService } from './auth.service';

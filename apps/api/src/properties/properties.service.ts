@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Inquiry, Prisma, Property, PropertyStatus } from '@prisma/client';
+import { Prisma, Property, PropertyStatus } from '@prisma/client';
 import { AgentProperty, contract } from '@properview/api-contract';
 import { ServerInferRequest, ServerInferResponseBody } from '@ts-rest/core';
 import { MapboxService } from '../mapbox/mapbox.service';
@@ -16,7 +16,7 @@ export class PropertiesService {
   private readonly cache = new NodeCache({ stdTTL: 60 * 5 });
 
   async paginate(
-    queryParams: Exclude<
+    queryParams: Omit<
       ServerInferRequest<typeof contract.public.properties.list>['query'],
       'page' | 'limit'
     >,
@@ -89,7 +89,7 @@ export class PropertiesService {
 
       // Use raw SQL with Haversine formula for precise distance calculation within 10 miles
       const propertiesWithDistance = await this.prisma.$queryRaw<
-        Array<any & { distance_miles: number }>
+        Array<Property & { distance_miles: number }>
       >(
         Prisma.sql`
                     SELECT 
@@ -321,7 +321,7 @@ export class PropertiesService {
   }
 
   async delete(id: string, agentId: string) {
-    const property = await this.prisma.property.findUniqueOrThrow({
+    await this.prisma.property.findUniqueOrThrow({
       where: {
         id,
         agentId,

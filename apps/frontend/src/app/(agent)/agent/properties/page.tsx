@@ -1,5 +1,5 @@
 import AgentPropertiesList from "@/components/AgentDashboard/AgentPropertiesList";
-import { rQQueryClient, tsr, tsrQueryClient } from "@/utils/tsr";
+import { rQQueryClient, tsrQueryClient } from "@/utils/tsr";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
 import { cookies } from "next/headers";

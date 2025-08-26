@@ -111,7 +111,8 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
               Property not found
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              The property you're looking for doesn't exist or has been removed.
+              The property you&apos;re looking for doesn&apos;t exist or has
+              been removed.
             </p>
             <Button onClick={() => router.push("/")}>Go Back</Button>
           </div>
