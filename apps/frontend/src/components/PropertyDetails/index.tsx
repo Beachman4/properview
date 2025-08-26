@@ -103,18 +103,38 @@ export default function PropertyDetails({ propertyId }: PropertyDetailsProps) {
   }
 
   if (error || !property) {
+    const isNetworkError = error && "status" in error && error.status >= 500;
+    const is404Error = error && "status" in error && error.status === 404;
+
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <h3 className="text-lg font-semibold text-destructive">
-              Property not found
+              {isNetworkError
+                ? "Service Temporarily Unavailable"
+                : is404Error || !property
+                  ? "Property Not Found"
+                  : "Something Went Wrong"}
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              The property you&apos;re looking for doesn&apos;t exist or has
-              been removed.
+              {isNetworkError
+                ? "We're experiencing technical difficulties. Please try again later."
+                : is404Error || !property
+                  ? "The property you're looking for doesn't exist or has been removed."
+                  : "An unexpected error occurred. Please try again."}
             </p>
-            <Button onClick={() => router.push("/")}>Go Back</Button>
+            <div className="space-x-2">
+              <Button onClick={() => router.push("/")}>Go Back</Button>
+              {isNetworkError && (
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.reload()}
+                >
+                  Try Again
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -321,13 +341,33 @@ function InquiryForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.message
-    ) {
-      toast.error("Please fill in all required fields");
+    // Basic validation with specific error messages
+    if (!formData.name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+    if (!formData.email.trim()) {
+      toast.error("Please enter your email address");
+      return;
+    }
+    if (!formData.email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    if (!formData.phone.trim()) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+    if (formData.phone.length < 10) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+    if (!formData.message.trim()) {
+      toast.error("Please enter a message");
+      return;
+    }
+    if (formData.message.length < 10) {
+      toast.error("Message must be at least 10 characters");
       return;
     }
 

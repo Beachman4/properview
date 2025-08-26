@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { ServerInferResponseBody } from '@ts-rest/core';
+import { ServerInferResponseBody, TsRestResponseError } from '@ts-rest/core';
 import { contract } from '@properview/api-contract';
 
 @Injectable()
@@ -17,6 +17,22 @@ export class InquiriesService {
       message: string;
     },
   ) {
+    const existingInquiry = await this.prisma.inquiry.findFirst({
+      where: {
+        propertyId,
+        email: inquiryData.email,
+      },
+    });
+
+    if (existingInquiry) {
+      throw new TsRestResponseError(contract.public.properties.submitInquiry, {
+        status: 400,
+        body: {
+          message: 'You have already submitted an inquiry for this property',
+        },
+      });
+    }
+
     const inquiry = await this.prisma.inquiry.create({
       data: {
         ...inquiryData,

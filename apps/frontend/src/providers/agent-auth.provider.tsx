@@ -43,6 +43,9 @@ export function AgentAuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setCookie("jwtToken", jwtToken, {
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60),
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
         });
       }
     }
@@ -75,7 +78,6 @@ export function AgentAuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const isAuthRoute = pathname === "/agent/login";
     if (!jwtToken && !isAuthRoute && cookies.jwtToken === undefined) {
-      console.log("redirecting to login from auth provider");
       router.push("/agent/login");
     }
     if (jwtToken && isAuthRoute) {

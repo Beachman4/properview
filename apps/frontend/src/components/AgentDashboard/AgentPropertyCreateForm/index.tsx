@@ -69,21 +69,16 @@ export default function AgentPropertyCreateForm() {
       return;
     }
 
-    try {
-      createProperty({
-        body: {
-          title: formData.title,
-          address: formData.address,
-          price,
-          bedrooms,
-          bathrooms,
-          description: formData.description || "",
-        },
-      });
-    } catch (error) {
-      toast.error("Failed to validate address. Please try again.");
-      console.error("Geocoding error:", error);
-    }
+    createProperty({
+      body: {
+        title: formData.title,
+        address: formData.address,
+        price,
+        bedrooms,
+        bathrooms,
+        description: formData.description || "",
+      },
+    });
   };
 
   const handleInputChange = (field: string, value: string) => {

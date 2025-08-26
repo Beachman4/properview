@@ -6,7 +6,7 @@ export const configValidationSchema = z.object({
   APP_ENV: z.string().default('dev'),
 
   // Database
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.string().min(1, 'Database URL is required'),
   DATABASE_USER: z.string().default('properview'),
   DATABASE_PASSWORD: z.string().default('properview'),
   DATABASE_DB: z.string().default('properview'),
@@ -16,7 +16,7 @@ export const configValidationSchema = z.object({
   JWT_SECRET: z.string(),
 
   // Mapbox
-  MAPBOX_ACCESS_TOKEN: z.string(),
+  MAPBOX_ACCESS_TOKEN: z.string().min(1, 'Mapbox access token is required'),
 });
 
 export type EnvConfig = z.infer<typeof configValidationSchema>;

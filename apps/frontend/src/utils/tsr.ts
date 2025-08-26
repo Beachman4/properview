@@ -14,19 +14,21 @@ export const setAccessTokenGetter = (getter: () => string | null) => {
 export const rQQueryClient = new QueryClient();
 
 export const tsr = initTsrReactQuery(contract, {
-  baseUrl: `${process.env.NEXT_PUBLIC_API_HOST}`,
+  baseUrl: process.env.NEXT_PUBLIC_API_HOST || "http://localhost:4500",
   baseHeaders: {
     authorization: () => {
-      return accessTokenGetter() ? `Bearer ${accessTokenGetter()}` : "";
+      const token = accessTokenGetter();
+      return token ? `Bearer ${token}` : "";
     },
   },
 });
 
 export const vanillaClient = initClient(contract, {
-  baseUrl: `${process.env.NEXT_PUBLIC_API_HOST}`,
+  baseUrl: process.env.NEXT_PUBLIC_API_HOST || "http://localhost:4500",
   baseHeaders: {
     authorization: () => {
-      return accessTokenGetter() ? `Bearer ${accessTokenGetter()}` : "";
+      const token = accessTokenGetter();
+      return token ? `Bearer ${token}` : "";
     },
   },
 });

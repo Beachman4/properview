@@ -55,11 +55,20 @@ export const propertiesRouter = c.router({
     method: "POST",
     path: "/inquiries",
     body: z.object({
-      propertyId: z.string(),
-      name: z.string(),
-      email: z.email(),
-      phone: z.string(),
-      message: z.string(),
+      propertyId: z.string().uuid("Invalid property ID format"),
+      name: z
+        .string()
+        .min(2, "Name must be at least 2 characters")
+        .max(100, "Name too long"),
+      email: z.string().email("Invalid email format"),
+      phone: z
+        .string()
+        .min(10, "Phone number must be at least 10 digits")
+        .max(20, "Phone number too long"),
+      message: z
+        .string()
+        .min(10, "Message must be at least 10 characters")
+        .max(1000, "Message too long"),
     }),
     responses: {
       200: z.object({
