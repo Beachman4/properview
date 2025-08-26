@@ -57,6 +57,6 @@ model Inquiry {
     phone String
     message String
     propertyId String @db.Uuid
-    property Property @relation(fields: [propertyId], references: [id])
+    property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
 }

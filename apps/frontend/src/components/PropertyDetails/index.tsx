@@ -6,15 +6,10 @@ import { tsr } from "@/utils/tsr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Bed, Bath, MapPin, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import mapboxgl from "mapbox-gl";
-import { isFetchError } from "@ts-rest/react-query/v5";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import InquiryForm from "./InquiryForm";
 
 // Set Mapbox access token
