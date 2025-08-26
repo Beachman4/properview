@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
+    "deploy": "npm run pages:build && wrangler pages deploy",
     "start": "next start",
     "lint:fix": "pnpm lint --fix",
     "format": "prettier --ignore-path .gitignore \"src/**/*.+(ts|js|tsx)\"",
     "lint": "next lint",
+    "pages:build": "npx @cloudflare/next-on-pages",
     "format:fix": "pnpm format --write",
     "setup": "node -e \"const fs=require('fs');if(!fs.existsSync('.env')&&fs.existsSync('.env.example'))fs.copyFileSync('.env.example','.env')\""
   },
@@ -70,6 +72,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "1.13.7",
     "@properview/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
