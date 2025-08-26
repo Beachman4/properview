@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: "Properview - Agent Properties",
 };
 
+export const runtime = "edge";
+
 type SearchParams = Promise<{
   page?: string;
 }>;

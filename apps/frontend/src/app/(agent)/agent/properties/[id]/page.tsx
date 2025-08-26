@@ -1,9 +1,17 @@
 import AgentPropertyDetails from "@/components/AgentDashboard/AgentPropertyDetails";
 import { rQQueryClient, tsrQueryClient } from "@/utils/tsr";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Metadata } from "next";
 import { cookies } from "next/headers";
 
 type Params = Promise<{ id: string }>;
+
+export const runtime = "edge";
+
+export const metadata: Metadata = {
+  title: "Properview - Property Details",
+  description: "Properview - Property Details",
+};
 
 export default async function PropertyDetailsPage({
   params,

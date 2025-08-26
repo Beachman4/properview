@@ -2,6 +2,8 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { tsrQueryClient } from "@/utils/tsr";
 import Listings from "@/components/Listings";
 
+export const runtime = "edge";
+
 export default async function Home({
   searchParams,
 }: {

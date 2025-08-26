@@ -2,6 +2,8 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { tsrQueryClient } from "@/utils/tsr";
 import PropertyDetails from "@/components/PropertyDetails";
 
+export const runtime = "edge";
+
 export default async function PropertyDetailsPage({
   params,
 }: {
