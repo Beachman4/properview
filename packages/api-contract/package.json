@@ -13,8 +13,7 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
-    "format:fix": "prettier --write src/**/*.ts --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format:fix": "prettier --write src/**/*.ts --write"
   },
   "dependencies": {
     "@ts-rest/core": "catalog:",
