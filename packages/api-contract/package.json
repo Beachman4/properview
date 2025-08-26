@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "@properview/eslint-config": "workspace:*",
+    "eslint": "^9.34.0",
+    "prettier": "^3.6.2",
     "tsc-watch": "6.2.1"
   }
 }
